@@ -124,6 +124,11 @@ export default function Home() {
   const [active, setActive] = useState<PlatformKey>("IPN");
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [playing, setPlaying] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<"sign-in" | "sign-up" | "forgot">("sign-in");
+  const [userName, setUserName] = useState("Zayd");
+  const [signedIn, setSignedIn] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const featured = useMemo(() => episodes.find((item) => item.platform === active) ?? episodes[0], [active, episodes]);
 
@@ -168,6 +173,23 @@ export default function Home() {
     setPlaying(true);
   };
 
+  const openAuth = (mode: "sign-in" | "sign-up" | "forgot" = "sign-in") => {
+    setAuthMode(mode);
+    setAuthOpen(true);
+  };
+
+  const submitAuth = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const name = String(form.get("name") || form.get("email") || "Member").split("@")[0];
+    setUserName(name.charAt(0).toUpperCase() + name.slice(1));
+    setSignedIn(true);
+    setAuthOpen(false);
+    setShowWelcome(true);
+    window.setTimeout(() => setShowWelcome(false), 4200);
+    window.location.hash = "dashboard";
+  };
+
   return (
     <main className="min-h-screen overflow-hidden bg-[#f4f0e8] text-zinc-950 transition-colors duration-500 dark:bg-[#090908] dark:text-[#f6f0e5]">
       <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_20%_10%,rgba(195,142,71,.25),transparent_28%),radial-gradient(circle_at_80%_5%,rgba(50,92,88,.18),transparent_30%),linear-gradient(120deg,rgba(255,255,255,.65),transparent)] dark:bg-[radial-gradient(circle_at_20%_10%,rgba(195,142,71,.16),transparent_28%),radial-gradient(circle_at_85%_15%,rgba(87,116,112,.18),transparent_30%)]" />
@@ -179,7 +201,11 @@ export default function Home() {
           </nav>
           <div className="flex items-center gap-2">
             <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="rounded-full border border-black/10 bg-white/70 p-3 dark:border-white/10 dark:bg-white/10" aria-label="Toggle theme">{theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}</button>
-            <button className="rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-black">Sign In</button>
+            {signedIn ? (
+              <button onClick={() => setSignedIn(false)} className="rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-black">Sign Out</button>
+            ) : (
+              <button onClick={() => openAuth("sign-in")} className="rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-black">Sign In</button>
+            )}
             <Menu className="lg:hidden" />
           </div>
         </div>
@@ -192,7 +218,7 @@ export default function Home() {
           <h1 className="max-w-4xl text-5xl font-semibold leading-[.95] tracking-[-0.05em] md:text-7xl">One premium knowledge ecosystem for IPN, IGC, IFR and ISR.</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-700 dark:text-zinc-300">A production-ready PWA blueprint combining discovery, learning, publishing, membership, podcast RSS automation, secure admin CMS, SEO/AEO operations and cross-platform access in one unified Gate experience.</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a className="rounded-full bg-zinc-950 px-6 py-4 text-sm font-bold text-white shadow-xl shadow-black/10 dark:bg-white dark:text-black" href="#membership">Become a Member</a>
+            <button onClick={() => openAuth("sign-up")} className="rounded-full bg-zinc-950 px-6 py-4 text-sm font-bold text-white shadow-xl shadow-black/10 dark:bg-white dark:text-black">Become a Member</button>
             <a className="rounded-full border border-black/15 bg-white/60 px-6 py-4 text-sm font-bold dark:border-white/15 dark:bg-white/10" href="#gate-feed">Explore Gate Feed</a>
           </div>
         </div>
@@ -280,7 +306,7 @@ export default function Home() {
         <SectionTitle eyebrow="User Account" title="Dashboard, progress, profile and premium access states" text="Guests see previews and premium overlays; logged-in users manage accounts; active members unlock everything; expired members retain metadata while access locks." />
         <div className="mt-8 grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
           <div className="rounded-[2rem] border border-black/10 bg-white/65 p-6 dark:border-white/10 dark:bg-white/5">
-            <div className="flex items-center gap-4"><div className="grid size-16 place-items-center rounded-full bg-zinc-950 text-white"><User /></div><div><h3 className="text-2xl font-semibold">Greetings, Zayd</h3><p className="text-sm text-zinc-500">Active Gate Member</p></div></div>
+            <div className="flex items-center gap-4"><div className="grid size-16 place-items-center rounded-full bg-zinc-950 text-white"><User /></div><div><h3 className="text-2xl font-semibold">Greetings, {signedIn ? userName : "Guest"}</h3><p className="text-sm text-zinc-500">{signedIn ? "Active Gate Member" : "Sign in to activate your dashboard"}</p></div></div>
             <div className="mt-6 grid gap-3">{["Profile Photo", "Name", "Bio", "Interests", "Membership", "Reading History", "Listening History", "Downloads", "Bookmarks", "Recently Viewed", "Progress Timeline", "Activity Calendar"].map((item) => <div className="flex justify-between rounded-2xl bg-black/5 p-3 dark:bg-white/10" key={item}><span>{item}</span><Check size={18} /></div>)}</div>
           </div>
           <div className="grid gap-5 md:grid-cols-2">
@@ -297,7 +323,7 @@ export default function Home() {
         <div className="relative mt-8 overflow-hidden rounded-[2rem] border border-black/10 bg-white/65 p-6 dark:border-white/10 dark:bg-white/5">
           <h3 className="max-w-2xl text-3xl font-semibold">Research Report: Global ethical finance outlook and policy pathways</h3>
           <p className="mt-4 max-w-3xl text-zinc-600 dark:text-zinc-300">This premium report preview remains readable enough to understand value while the protected section is secured behind membership access...</p>
-          <div className="absolute inset-x-0 bottom-0 rounded-t-[2rem] bg-gradient-to-t from-zinc-950 via-zinc-950/90 to-transparent p-8 pt-28 text-white backdrop-blur-sm"><Lock /><h4 className="mt-3 text-2xl font-semibold">Unlock with Gate Membership</h4><p className="mt-2 text-white/75">Premium books, podcasts, reports, downloads, certificates, workshops and communities.</p><div className="mt-5 flex gap-3"><button className="rounded-full bg-white px-5 py-3 font-bold text-black">Log In</button><button className="rounded-full border border-white/30 px-5 py-3 font-bold">Become a Member</button></div></div>
+          {!signedIn && <div className="absolute inset-x-0 bottom-0 rounded-t-[2rem] bg-gradient-to-t from-zinc-950 via-zinc-950/90 to-transparent p-8 pt-28 text-white backdrop-blur-sm"><Lock /><h4 className="mt-3 text-2xl font-semibold">Unlock with Gate Membership</h4><p className="mt-2 text-white/75">Premium books, podcasts, reports, downloads, certificates, workshops and communities.</p><div className="mt-5 flex gap-3"><button onClick={() => openAuth("sign-in")} className="rounded-full bg-white px-5 py-3 font-bold text-black">Log In</button><button onClick={() => openAuth("sign-up")} className="rounded-full border border-white/30 px-5 py-3 font-bold">Become a Member</button></div></div>}
         </div>
       </section>
 
@@ -350,8 +376,16 @@ export default function Home() {
       </section>
 
       <footer className="border-t border-black/10 px-4 py-10 dark:border-white/10"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-4 md:flex-row"><Logo compact /><p className="text-sm text-zinc-500">Facebook · Instagram · LinkedIn · X · Gate. Learn. Discover. Grow.</p></div></footer>
+      {showWelcome && <div className="fixed right-4 top-24 z-[70] flex items-center gap-3 rounded-3xl border border-black/10 bg-white/95 p-4 shadow-2xl shadow-black/15 animate-in fade-in slide-in-from-top-3 dark:border-white/10 dark:bg-zinc-950/95"><Logo compact /><span className="font-semibold">Greetings, {userName}</span></div>}
+      {authOpen && <AuthDialog mode={authMode} setMode={setAuthMode} onClose={() => setAuthOpen(false)} onSubmit={submitAuth} />}
     </main>
   );
+}
+
+function AuthDialog({ mode, setMode, onClose, onSubmit }: { mode: "sign-in" | "sign-up" | "forgot"; setMode: (mode: "sign-in" | "sign-up" | "forgot") => void; onClose: () => void; onSubmit: (event: React.FormEvent<HTMLFormElement>) => void }) {
+  const title = mode === "sign-in" ? "Sign in to .Gate" : mode === "sign-up" ? "Create your Gate account" : "Reset your password";
+  const button = mode === "forgot" ? "Send Reset Link" : mode === "sign-up" ? "Create Account" : "Sign In";
+  return <div className="fixed inset-0 z-[80] grid place-items-center bg-black/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true"><form onSubmit={onSubmit} className="w-full max-w-md rounded-[2rem] border border-black/10 bg-[#f4f0e8] p-6 shadow-2xl dark:border-white/10 dark:bg-[#11100e]"><div className="flex items-center justify-between"><Logo compact /><button type="button" onClick={onClose} className="rounded-full border border-black/10 px-3 py-1 text-sm dark:border-white/10">Close</button></div><h2 className="mt-8 text-3xl font-semibold tracking-tight">{title}</h2><p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">This prototype signs you in locally and routes you to the correct dashboard. Production auth can connect to Better Auth, email verification, 2FA and social login.</p>{mode === "sign-up" && <label className="mt-6 block text-sm font-semibold">Name<input name="name" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30" placeholder="Zayd Haji" /></label>}<label className="mt-4 block text-sm font-semibold">Email<input name="email" type="email" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30" placeholder="you@example.com" /></label>{mode !== "forgot" && <label className="mt-4 block text-sm font-semibold">Password<input name="password" type="password" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30" placeholder="Enter password" /></label>}<button className="mt-6 w-full rounded-full bg-zinc-950 px-5 py-4 font-bold text-white dark:bg-white dark:text-black">{button}</button><div className="mt-5 flex flex-wrap justify-center gap-3 text-sm"><button type="button" onClick={() => setMode("sign-in")} className="font-semibold">Sign In</button><button type="button" onClick={() => setMode("sign-up")} className="font-semibold">Sign Up</button><button type="button" onClick={() => setMode("forgot")} className="font-semibold">Forgot Password</button></div></form></div>;
 }
 
 function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: string; text: string }) {
