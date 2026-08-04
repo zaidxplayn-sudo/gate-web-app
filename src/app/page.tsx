@@ -100,6 +100,17 @@ const plans = [
 const nav = ["Home", "Gate Feed", "Search", "Membership", "Dashboard", "CMS", "Security", "Z Web App"];
 const contentTypes = ["All", "Books", "Infographics", "Podcasts", "Research Reports"];
 const adminModules = ["Users", "Memberships", "Payments", "Content", "RSS Sync", "Media Library", "SEO/AEO", "Analytics", "Notifications", "Settings", "Audit Logs"];
+const contentLibrary = [
+  { platform: "IPN", type: "Books", title: "World Policy Handbook", category: "World", tags: ["World", "Global", "Politics"], description: "A premium book entry connected to the World category and global public affairs tags." },
+  { platform: "IPN", type: "Books", title: "Climate, Society and Progress", category: "Environment & Climate", tags: ["World", "Climate", "Policy"], description: "Book metadata appears when users filter Books with the World tag." },
+  { platform: "IGC", type: "Books", title: "Global Productivity Playbook", category: "Productivity & Time Management", tags: ["World", "Productivity", "Leadership"], description: "Cross-platform discovery keeps the selected tag active beyond one hub." },
+  { platform: "IFR", type: "Books", title: "World Economy and Ethical Finance", category: "Global Economy", tags: ["World", "Finance", "Economy"], description: "IFR books can surface beside IPN and IGC when tags match." },
+  { platform: "ISR", type: "Books", title: "Theology in a Connected World", category: "Contemporary Theological Issues", tags: ["World", "Theology", "Society"], description: "ISR books remain discoverable through the unified Gate tag system." },
+  { platform: "IPN", type: "Research Reports", title: "World Governance Outlook", category: "Politics & Governance", tags: ["World", "Governance"], description: "Research reports stay separate unless the user selects the matching content type." },
+  { platform: "IFR", type: "Podcasts", title: "Global Markets Briefing", category: "Financial Markets", tags: ["World", "Markets"], description: "Podcast cards are indexed by platform, category and tags." },
+  { platform: "IGC", type: "Infographics", title: "World Skills Map", category: "Career Development", tags: ["World", "Career"], description: "Infographic posts use the same metadata and recommendation graph." },
+] as const;
+const globalTags = ["World", "Global", "Politics", "Climate", "Productivity", "Leadership", "Finance", "Economy", "Theology", "Society", "Governance", "Markets", "Career"];
 
 function Logo({ compact = false }: { compact?: boolean }) {
   return (
@@ -129,8 +140,17 @@ export default function Home() {
   const [userName, setUserName] = useState("Zayd");
   const [signedIn, setSignedIn] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [selectedType, setSelectedType] = useState("Books");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedTag, setSelectedTag] = useState("World");
   const audioRef = useRef<HTMLAudioElement>(null);
   const featured = useMemo(() => episodes.find((item) => item.platform === active) ?? episodes[0], [active, episodes]);
+  const filteredContent = useMemo(() => contentLibrary.filter((item) => {
+    const typeMatch = selectedType === "All" || item.type === selectedType;
+    const categoryMatch = selectedCategory === "All" || item.category === selectedCategory;
+    const tagMatch = selectedTag === "All" || (item.tags as readonly string[]).includes(selectedTag);
+    return typeMatch && categoryMatch && tagMatch;
+  }), [selectedType, selectedCategory, selectedTag]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -225,7 +245,7 @@ export default function Home() {
         <div className="rounded-[2.5rem] border border-black/10 bg-white/55 p-4 shadow-2xl shadow-black/10 backdrop-blur dark:border-white/10 dark:bg-white/5">
           <div className="grid gap-4 sm:grid-cols-2">
             {(Object.keys(platforms) as PlatformKey[]).map((id) => (
-              <button key={id} onClick={() => setActive(id)} className={`group min-h-56 rounded-[2rem] border p-5 text-left transition hover:-translate-y-1 ${active === id ? "border-black bg-white shadow-xl dark:border-white dark:bg-white/10" : "border-black/10 bg-white/45 dark:border-white/10 dark:bg-black/20"}`}>
+              <button key={id} onClick={() => { setActive(id); setSelectedCategory("All"); }} className={`group min-h-56 rounded-[2rem] border p-5 text-left transition hover:-translate-y-1 ${active === id ? "border-black bg-white shadow-xl dark:border-white dark:bg-white/10" : "border-black/10 bg-white/45 dark:border-white/10 dark:bg-black/20"}`}>
                 <PlatformLogo id={id} />
                 <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-300">{platforms[id].name}</p>
                 <p className="mt-2 text-lg font-semibold">{platforms[id].promise}</p>
@@ -242,11 +262,26 @@ export default function Home() {
             <div>
               <PlatformLogo id={active} />
               <h2 className="mt-4 text-3xl font-semibold tracking-tight">{platforms[active].name}</h2>
-              <div className="mt-5 flex flex-wrap gap-2">{contentTypes.map((type) => <span className="rounded-full border border-black/10 bg-white/55 px-4 py-2 text-sm font-semibold dark:border-white/10 dark:bg-black/20" key={type}>{type}</span>)}</div>
+              <div className="mt-5 flex flex-wrap gap-2">{contentTypes.map((type) => <button onClick={() => setSelectedType(type)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${selectedType === type ? "border-zinc-950 bg-zinc-950 text-white dark:border-white dark:bg-white dark:text-black" : "border-black/10 bg-white/55 dark:border-white/10 dark:bg-black/20"}`} key={type}>{type}</button>)}</div>
             </div>
             <div className="max-w-2xl">
               <h3 className="text-sm font-bold uppercase tracking-[0.22em] text-zinc-500">Categories</h3>
-              <div className="mt-4 flex flex-wrap gap-2">{platforms[active].categories.map((cat) => <span className="rounded-full bg-zinc-950 px-3 py-2 text-xs font-semibold text-white dark:bg-white dark:text-black" key={cat}>{cat}</span>)}</div>
+              <div className="mt-4 flex flex-wrap gap-2"><button onClick={() => setSelectedCategory("All")} className={`rounded-full px-3 py-2 text-xs font-semibold ${selectedCategory === "All" ? "bg-zinc-950 text-white dark:bg-white dark:text-black" : "bg-white/60 dark:bg-black/20"}`}>All</button>{platforms[active].categories.map((cat) => <button onClick={() => setSelectedCategory(cat)} className={`rounded-full px-3 py-2 text-xs font-semibold ${selectedCategory === cat ? "bg-zinc-950 text-white dark:bg-white dark:text-black" : "bg-white/60 dark:bg-black/20"}`} key={cat}>{cat}</button>)}</div>
+            </div>
+          </div>
+          <div className="mt-8 rounded-[2rem] border border-black/10 bg-white/60 p-5 dark:border-white/10 dark:bg-black/20">
+            <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
+              <div>
+                <h3 className="text-2xl font-semibold">Unified category and tag results</h3>
+                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">Example: select Books and the World tag to show all matching books across IPN, IGC, IFR and ISR below.</p>
+              </div>
+              <div className="rounded-full bg-zinc-950 px-4 py-2 text-sm font-bold text-white dark:bg-white dark:text-black">{filteredContent.length} results</div>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {["All", ...globalTags].map((tag) => <button onClick={() => setSelectedTag(tag)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${selectedTag === tag ? "border-[#9a6d35] bg-[#9a6d35] text-white" : "border-black/10 bg-white/70 dark:border-white/10 dark:bg-white/10"}`} key={tag}>#{tag}</button>)}
+            </div>
+            <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {filteredContent.map((item, index) => <article key={`${item.platform}-${item.title}`} className="rounded-[1.5rem] border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-black/30"><div className="flex items-start justify-between gap-3"><span className="rounded-full bg-zinc-950 px-3 py-1 text-xs font-bold text-white dark:bg-white dark:text-black">{String(index + 1).padStart(2, "0")} {item.type.slice(0, -1)}</span><span className="text-sm font-bold text-[#9a6d35]">{item.platform}</span></div><h4 className="mt-5 text-xl font-semibold">{item.title}</h4><p className="mt-2 text-sm text-zinc-500">{item.category}</p><p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{item.description}</p><div className="mt-4 flex flex-wrap gap-2">{item.tags.map((tag) => <button onClick={() => setSelectedTag(tag)} className="rounded-full bg-black/5 px-2 py-1 text-xs font-semibold dark:bg-white/10" key={tag}>#{tag}</button>)}</div></article>)}
             </div>
           </div>
           <div className="mt-8 grid gap-4 lg:grid-cols-3">
