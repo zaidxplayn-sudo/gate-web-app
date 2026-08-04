@@ -97,9 +97,8 @@ const plans = [
   ["9 Years", "₹5,799", "Legacy", "Only ₹53.69/month, best long-term value."],
 ];
 
-const nav = ["Home", "Gate Feed", "Search", "Membership", "Dashboard", "CMS", "Security", "Z Web App"];
+const nav = ["Home", "Gate Feed", "Search", "Membership", "Dashboard", "Z Web App"];
 const contentTypes = ["All", "Books", "Infographics", "Podcasts", "Research Reports"];
-const adminModules = ["Users", "Memberships", "Payments", "Content", "RSS Sync", "Media Library", "SEO/AEO", "Analytics", "Notifications", "Settings", "Audit Logs"];
 const contentLibrary = [
   { platform: "IPN", type: "Books", title: "World Policy Handbook", category: "World", tags: ["World", "Global", "Politics"], description: "A premium book entry connected to the World category and global public affairs tags." },
   { platform: "IPN", type: "Books", title: "Climate, Society and Progress", category: "Environment & Climate", tags: ["World", "Climate", "Policy"], description: "Book metadata appears when users filter Books with the World tag." },
@@ -362,19 +361,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="cms" className="mx-auto max-w-7xl px-4 py-14">
-        <SectionTitle eyebrow="Admin CMS" title="WordPress, Creator Studio and Podcast CMS workflows" text="A secure backend dashboard controls users, memberships, payments, RSS, publishing, drag-and-drop ordering, SEO/AEO, analytics and settings." />
-        <div className="mt-8 grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
-          <div className="rounded-[2rem] border border-black/10 bg-zinc-950 p-6 text-white dark:border-white/10"><LayoutDashboard /><h3 className="mt-4 text-2xl font-semibold">Admin Dashboard</h3><div className="mt-5 grid gap-3">{adminModules.map((item) => <div className="flex items-center justify-between rounded-2xl bg-white/10 p-3" key={item}><span>{item}</span><ChevronRight size={16} /></div>)}</div></div>
-          <div className="grid gap-5 md:grid-cols-2">
-            <Spec title="Books & Reports" items={["16:25 cover", "PDF upload", "Free sample toggle", "Gate Reader", "Purchase links ON/OFF"]} />
-            <Spec title="Infographics" items={["4:5 image upload", "Live crop preview", "Schedule", "Featured", "Full-screen post"]} />
-            <Spec title="Podcasts" items={["Automatic RSS sync", "Manual category mapping", "Metadata editor", "Featured episodes", "No demo audio"]} />
-            <Spec title="Publishing" items={["Draft", "Preview", "Schedule", "Publish", "Archive", "Duplicate", "Version History"]} />
-          </div>
-        </div>
-      </section>
-
       <section className="mx-auto max-w-7xl px-4 py-14">
         <SectionTitle eyebrow="Podcast Player" title="Full-screen playback, mini-player and real RSS audio" text="The app fetches RSS episodes through /api/podcasts and connects the audio enclosure URL directly to the in-app player." />
         <div className="mt-8 rounded-[2.5rem] border border-black/10 bg-[#18140f] p-5 text-white shadow-2xl dark:border-white/10 md:p-8">
@@ -388,16 +374,6 @@ export default function Home() {
               <div className="mt-8 flex flex-wrap items-center gap-3"><button onClick={toggleAudio} className="grid size-16 place-items-center rounded-full bg-white text-black" aria-label="Play podcast">{playing ? <Pause /> : <Play />}</button>{["-30", "+10", "1x", "Queue", "Sleep", "Download", "Share"].map((item) => <button className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold" key={item}>{item}</button>)}</div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section id="security" className="mx-auto max-w-7xl px-4 py-14">
-        <SectionTitle eyebrow="Enterprise Architecture" title="Security, SEO/AEO, performance and deployment roadmap" text="The implementation blueprint covers WCAG 2.2 AA, PWA offline support, Core Web Vitals, CDN delivery, monitoring, backups, API security and future expansion." />
-        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          <Spec title="Security" items={["2FA", "RBAC", "Audit logs", "Rate limits", "Session controls", "GDPR-ready privacy"]} />
-          <Spec title="SEO & AEO" items={["Schema.org", "Canonical URLs", "Open Graph", "XML sitemap", "AI metadata", "Google Discover"]} />
-          <Spec title="PWA" items={["Offline shell", "Install prompts", "Media Session", "Background sync", "Image caching", "Responsive iOS/Android"]} />
-          <Spec title="DevOps" items={["Edge CDN", "Object storage", "Backups", "Monitoring", "CI typecheck", "Blue-green deploys"]} />
         </div>
       </section>
 
