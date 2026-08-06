@@ -20,13 +20,20 @@ import {
   Moon,
   Pause,
   Play,
+  Repeat,
   Search,
   Settings,
+  Share2,
   ShieldCheck,
+  Shuffle,
+  SkipBack,
+  SkipForward,
   Sparkles,
   Sun,
   User,
+  Volume2,
   WalletCards,
+  X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -34,10 +41,14 @@ type PlatformKey = "IPN" | "IGC" | "IFR" | "ISR";
 
 type Episode = {
   platform: PlatformKey | "Z";
+  podcastTitle?: string;
+  creator?: string;
   title: string;
   description: string;
   audioUrl: string;
   image: string;
+  duration?: string;
+  episodeUrl?: string;
   pubDate: string;
 };
 
@@ -154,8 +165,17 @@ export default function Home() {
   const [selectedType, setSelectedType] = useState("Books");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedTag, setSelectedTag] = useState("World");
+  const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
+  const [playerOpen, setPlayerOpen] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
+  const [speed, setSpeed] = useState(1);
+  const [repeat, setRepeat] = useState(false);
+  const [shuffle, setShuffle] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const featured = useMemo(() => episodes.find((item) => item.platform === active) ?? episodes[0], [active, episodes]);
+  const nowPlaying = currentEpisode ?? featured;
   const filteredContent = useMemo(() => contentLibrary.filter((item) => {
     const typeMatch = selectedType === "All" || item.type === selectedType;
     const categoryMatch = selectedCategory === "All" || item.category === selectedCategory;
@@ -173,6 +193,42 @@ export default function Home() {
       .then((data: { episodes?: Episode[] }) => setEpisodes(data.episodes ?? []))
       .catch(() => setEpisodes([]));
   }, []);
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+    audioRef.current.volume = volume;
+    audioRef.current.playbackRate = speed;
+    audioRef.current.loop = repeat;
+  }, [volume, speed, repeat]);
+
+  useEffect(() => {
+    if (!nowPlaying || !("mediaSession" in navigator)) return;
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: nowPlaying.title,
+      artist: nowPlaying.creator || nowPlaying.platform,
+      album: nowPlaying.podcastTitle || `${nowPlaying.platform} Podcast`,
+      artwork: nowPlaying.image ? [{ src: nowPlaying.image, sizes: "512x512", type: "image/png" }] : [],
+    });
+    navigator.mediaSession.setActionHandler("play", () => void audioRef.current?.play());
+    navigator.mediaSession.setActionHandler("pause", () => audioRef.current?.pause());
+    navigator.mediaSession.setActionHandler("seekbackward", () => skipBy(-30));
+    navigator.mediaSession.setActionHandler("seekforward", () => skipBy(10));
+  }, [nowPlaying]);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (!playerOpen) return;
+      if (event.code === "Space") {
+        event.preventDefault();
+        void toggleAudio();
+      }
+      if (event.key === "ArrowLeft") skipBy(-10);
+      if (event.key === "ArrowRight") skipBy(10);
+      if (event.key === "Escape") setPlayerOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
   useEffect(() => {
     const playBeat = () => {
@@ -194,7 +250,7 @@ export default function Home() {
   }, []);
 
   const toggleAudio = async () => {
-    if (!audioRef.current || !featured?.audioUrl) return;
+    if (!audioRef.current || !nowPlaying?.audioUrl) return;
     if (playing) {
       audioRef.current.pause();
       setPlaying(false);
@@ -202,6 +258,48 @@ export default function Home() {
     }
     await audioRef.current.play();
     setPlaying(true);
+  };
+
+  const openEpisode = async (episode: Episode) => {
+    if (!signedIn) {
+      openAuth("sign-in");
+      return;
+    }
+    setCurrentEpisode(episode);
+    setPlayerOpen(true);
+    setPlaying(false);
+    window.setTimeout(() => void audioRef.current?.play().then(() => setPlaying(true)).catch(() => setPlaying(false)), 80);
+  };
+
+  const skipBy = (seconds: number) => {
+    if (!audioRef.current) return;
+    audioRef.current.currentTime = Math.max(0, Math.min(audioRef.current.duration || 0, audioRef.current.currentTime + seconds));
+  };
+
+  const seekTo = (value: number) => {
+    if (!audioRef.current) return;
+    audioRef.current.currentTime = value;
+    setProgress(value);
+  };
+
+  const updateProgress = () => {
+    if (!audioRef.current) return;
+    setProgress(audioRef.current.currentTime || 0);
+    setDuration(audioRef.current.duration || 0);
+  };
+
+  const nextEpisode = () => {
+    if (!nowPlaying || episodes.length === 0) return;
+    const next = shuffle ? episodes[Math.floor(Math.random() * episodes.length)] : episodes[(episodes.findIndex((episode) => episode.audioUrl === nowPlaying.audioUrl) + 1) % episodes.length];
+    setCurrentEpisode(next);
+    window.setTimeout(() => void audioRef.current?.play().then(() => setPlaying(true)), 80);
+  };
+
+  const formatTime = (seconds: number) => {
+    if (!Number.isFinite(seconds)) return "0:00";
+    const minutes = Math.floor(seconds / 60);
+    const rest = Math.floor(seconds % 60).toString().padStart(2, "0");
+    return `${minutes}:${rest}`;
   };
 
   const openAuth = (mode: "sign-in" | "sign-up" | "forgot" = "sign-in") => {
@@ -311,11 +409,17 @@ export default function Home() {
           <div className="rounded-[2rem] border border-black/10 bg-white/55 p-5 dark:border-white/10 dark:bg-white/5">
             <div className="mb-4 flex items-center justify-between"><h3 className="flex items-center gap-2 text-xl font-semibold"><Headphones /> Podcasts</h3><span className="text-sm text-zinc-500">RSS synced</span></div>
             <div className="grid gap-4 md:grid-cols-3">
-              {(episodes.length ? episodes.slice(0, 3) : [{ title: "Live RSS episodes load from IPN, IGC, IFR and ISR", platform: active, description: "No placeholder audio is used.", audioUrl: "", image: "", pubDate: "" } as Episode]).map((episode, index) => (
-                <article key={`${episode.title}-${index}`} className="rounded-[1.5rem] border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-black/30">
-                  <div className="aspect-square rounded-[1.2rem] bg-gradient-to-br from-zinc-900 to-zinc-500 p-4 text-white"><span className="text-xs font-bold">{String(index + 1).padStart(2, "0")} Podcast</span><p className="mt-8 line-clamp-4 text-lg font-semibold">{episode.title}</p></div>
-                  <p className="mt-3 text-sm text-zinc-500">{episode.platform}</p>
-                </article>
+              {episodes.length === 0 && <div className="rounded-[1.5rem] border border-black/10 bg-white p-5 text-sm text-zinc-500 dark:border-white/10 dark:bg-black/30">Loading real RSS podcast episodes and artwork...</div>}
+              {episodes.slice(0, 6).map((episode, index) => (
+                <button type="button" onClick={() => void openEpisode(episode)} key={`${episode.title}-${index}`} className="rounded-[1.5rem] border border-black/10 bg-white p-4 text-left transition hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:bg-black/30">
+                  <div className="relative aspect-square overflow-hidden rounded-[1.2rem] bg-zinc-900 text-white">
+                    {episode.image && <img src={episode.image} alt={`${episode.title} artwork`} className="h-full w-full object-cover" />}
+                    <span className="absolute left-4 top-4 rounded-full bg-black/65 px-3 py-1 text-xs font-bold backdrop-blur">{String(index + 1).padStart(2, "0")} Podcast</span>
+                    <span className="absolute bottom-4 right-4 grid size-11 place-items-center rounded-full bg-white text-black"><Play size={18} /></span>
+                  </div>
+                  <p className="mt-3 text-sm font-bold text-[#9a6d35]">{episode.platform} · {episode.podcastTitle || "Podcast"}</p>
+                  <h4 className="mt-1 line-clamp-3 text-lg font-semibold leading-snug">{episode.title}</h4>
+                </button>
               ))}
             </div>
           </div>
@@ -377,13 +481,16 @@ export default function Home() {
         <SectionTitle eyebrow="Podcast Player" title="Full-screen playback, mini-player and real RSS audio" text="The app fetches RSS episodes through /api/podcasts and connects the audio enclosure URL directly to the in-app player." />
         <div className="mt-8 rounded-[2.5rem] border border-black/10 bg-[#18140f] p-5 text-white shadow-2xl dark:border-white/10 md:p-8">
           <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
-            <div className="aspect-square rounded-[2rem] bg-gradient-to-br from-[#d5a85c] to-[#31261b] p-6"><Headphones size={48} /><p className="mt-24 text-2xl font-semibold">{featured?.platform ?? active} Podcast</p></div>
+            <button onClick={() => nowPlaying && void openEpisode(nowPlaying)} className="aspect-square overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#d5a85c] to-[#31261b] text-left shadow-2xl">
+              {nowPlaying?.image ? <img src={nowPlaying.image} alt={`${nowPlaying.title} artwork`} className="h-full w-full object-cover" /> : <div className="p-6"><Headphones size={48} /><p className="mt-24 text-2xl font-semibold">{nowPlaying?.platform ?? active} Podcast</p></div>}
+            </button>
             <div className="flex flex-col justify-center">
               <p className="text-sm uppercase tracking-[0.25em] text-white/50">Now Playing</p>
-              <h3 className="mt-3 text-3xl font-semibold md:text-5xl">{featured?.title ?? "Loading live RSS episode"}</h3>
-              <p className="mt-4 line-clamp-3 text-white/65">{featured?.description?.replace(/<[^>]*>/g, "") ?? "RSS sync is loading the latest IPN, IGC, IFR and ISR episodes."}</p>
-              <audio ref={audioRef} src={featured?.audioUrl} onEnded={() => setPlaying(false)} preload="metadata" />
-              <div className="mt-8 flex flex-wrap items-center gap-3"><button onClick={toggleAudio} className="grid size-16 place-items-center rounded-full bg-white text-black" aria-label="Play podcast">{playing ? <Pause /> : <Play />}</button>{["-30", "+10", "1x", "Queue", "Sleep", "Download", "Share"].map((item) => <button className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold" key={item}>{item}</button>)}</div>
+              <h3 className="mt-3 text-3xl font-semibold md:text-5xl">{nowPlaying?.title ?? "Loading live RSS episode"}</h3>
+              <p className="mt-4 line-clamp-3 whitespace-pre-line text-left leading-7 text-white/65">{nowPlaying?.description ?? "RSS sync is loading the latest IPN, IGC, IFR and ISR episodes."}</p>
+              <audio ref={audioRef} src={nowPlaying?.audioUrl} onTimeUpdate={updateProgress} onLoadedMetadata={updateProgress} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => { setPlaying(false); if (!repeat) nextEpisode(); }} preload="metadata" />
+              <div className="mt-6 flex items-center gap-3 text-sm text-white/60"><span>{formatTime(progress)}</span><input aria-label="Seek podcast" type="range" min="0" max={duration || 0} value={progress} onChange={(event) => seekTo(Number(event.target.value))} className="w-full accent-white" /><span>{formatTime(duration)}</span></div>
+              <div className="mt-6 flex flex-wrap items-center gap-3"><button onClick={toggleAudio} className="grid size-16 place-items-center rounded-full bg-white text-black" aria-label="Play podcast">{playing ? <Pause /> : <Play />}</button><button onClick={() => skipBy(-30)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold">-30</button><button onClick={() => skipBy(10)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold">+10</button><button onClick={() => setSpeed(speed === 2 ? 1 : speed + 0.25)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold">{speed}x</button><button onClick={() => setPlayerOpen(true)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold">Open Full Player</button></div>
             </div>
           </div>
         </div>
@@ -397,6 +504,59 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {signedIn && nowPlaying && (
+        <div className="fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-5xl rounded-[1.5rem] border border-white/15 bg-[#17130f]/95 p-3 text-white shadow-2xl backdrop-blur-xl">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setPlayerOpen(true)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
+              {nowPlaying.image && <img src={nowPlaying.image} alt="Podcast artwork" className="size-14 rounded-xl object-cover" />}
+              <span className="min-w-0"><span className="block truncate font-semibold">{nowPlaying.title}</span><span className="block truncate text-sm text-white/55">{nowPlaying.platform} · {nowPlaying.podcastTitle || "Podcast"}</span></span>
+            </button>
+            <button onClick={() => skipBy(-30)} className="hidden rounded-full bg-white/10 p-3 sm:grid"><SkipBack size={18} /></button>
+            <button onClick={toggleAudio} className="grid size-12 place-items-center rounded-full bg-white text-black">{playing ? <Pause /> : <Play />}</button>
+            <button onClick={() => skipBy(10)} className="hidden rounded-full bg-white/10 p-3 sm:grid"><SkipForward size={18} /></button>
+          </div>
+        </div>
+      )}
+
+      {playerOpen && nowPlaying && signedIn && (
+        <div className="fixed inset-0 z-[90] overflow-y-auto bg-[#12100d] text-white">
+          <div className="min-h-screen bg-[radial-gradient(circle_at_50%_0%,rgba(214,168,92,.34),transparent_35%),linear-gradient(180deg,#17130f,#050505)] p-4 md:p-8">
+            <div className="mx-auto max-w-6xl">
+              <div className="flex items-center justify-between gap-4">
+                <button onClick={() => setPlayerOpen(false)} className="rounded-full bg-white/10 p-3"><X /></button>
+                <div className="flex items-center gap-2 text-sm text-white/60"><Headphones size={16} /> Full Screen Gate Player</div>
+                <button className="rounded-full bg-white/10 p-3"><Share2 /></button>
+              </div>
+              <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(260px,420px)_1fr] lg:items-start">
+                <div>
+                  <div className="aspect-square overflow-hidden rounded-[2rem] bg-zinc-900 shadow-2xl shadow-black/40">{nowPlaying.image && <img src={nowPlaying.image} alt={`${nowPlaying.title} thumbnail`} className="h-full w-full object-cover" />}</div>
+                  <div className="mt-5 rounded-[1.5rem] bg-white/10 p-4">
+                    <p className="text-sm uppercase tracking-[0.22em] text-white/45">Creator Profile</p>
+                    <h4 className="mt-2 text-xl font-semibold">{nowPlaying.creator || nowPlaying.podcastTitle || nowPlaying.platform}</h4>
+                    <p className="mt-1 text-sm text-white/60">{nowPlaying.platform} podcast feed synced from RSS.</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-[0.28em] text-[#d5a85c]">{nowPlaying.platform} · {nowPlaying.podcastTitle || "Podcast"}</p>
+                  <h2 className="mt-4 text-4xl font-semibold leading-tight tracking-[-0.04em] md:text-6xl">{nowPlaying.title}</h2>
+                  <p className="mt-3 text-sm text-white/50">{nowPlaying.pubDate} {nowPlaying.duration ? `· ${nowPlaying.duration}` : ""}</p>
+                  <div className="mt-8 rounded-[1.75rem] bg-black/25 p-5">
+                    <div className="flex items-center gap-3 text-sm text-white/60"><span>{formatTime(progress)}</span><input aria-label="Seek full player" type="range" min="0" max={duration || 0} value={progress} onChange={(event) => seekTo(Number(event.target.value))} className="w-full accent-[#d5a85c]" /><span>{formatTime(duration)}</span></div>
+                    <div className="mt-6 flex flex-wrap items-center justify-center gap-3"><button onClick={() => setShuffle(!shuffle)} className={`rounded-full p-3 ${shuffle ? "bg-[#d5a85c] text-black" : "bg-white/10"}`}><Shuffle /></button><button onClick={() => skipBy(-30)} className="rounded-full bg-white/10 p-4"><SkipBack /></button><button onClick={toggleAudio} className="grid size-20 place-items-center rounded-full bg-white text-black shadow-xl">{playing ? <Pause size={34} /> : <Play size={34} />}</button><button onClick={() => skipBy(10)} className="rounded-full bg-white/10 p-4"><SkipForward /></button><button onClick={() => setRepeat(!repeat)} className={`rounded-full p-3 ${repeat ? "bg-[#d5a85c] text-black" : "bg-white/10"}`}><Repeat /></button></div>
+                    <div className="mt-6 grid gap-4 md:grid-cols-3"><label className="flex items-center gap-3 rounded-full bg-white/10 px-4 py-3 text-sm"><Volume2 size={18} /><input aria-label="Volume" type="range" min="0" max="1" step="0.05" value={volume} onChange={(event) => setVolume(Number(event.target.value))} className="w-full accent-white" /></label><button onClick={() => setSpeed(speed === 2 ? 1 : speed + 0.25)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-bold">Speed {speed}x</button><button className="rounded-full bg-white/10 px-4 py-3 text-sm font-bold">Sleep Timer</button></div>
+                  </div>
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{["Queue", "Autoplay", "Download Offline", "Bookmark", "Transcript", "Related Episodes", "Resume Saved", "Casting Ready"].map((item) => <button className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold" key={item}>{item}</button>)}</div>
+                  <article className="mt-8 rounded-[1.75rem] bg-white/10 p-5">
+                    <h3 className="text-2xl font-semibold">Episode Description</h3>
+                    <p className="mt-4 whitespace-pre-line text-left text-base leading-8 text-white/75">{nowPlaying.description || "No description provided in the RSS feed."}</p>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer className="border-t border-black/10 px-4 py-10 dark:border-white/10"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-4 md:flex-row"><Logo compact /><p className="text-sm text-zinc-500">Facebook · Instagram · LinkedIn · X · Gate. Learn. Discover. Grow.</p></div></footer>
       {showWelcome && <div className="fixed right-4 top-24 z-[70] flex items-center gap-3 rounded-3xl border border-black/10 bg-white/95 p-4 shadow-2xl shadow-black/15 animate-in fade-in slide-in-from-top-3 dark:border-white/10 dark:bg-zinc-950/95"><Logo compact /><span className="font-semibold">Greetings, {userName}</span></div>}
