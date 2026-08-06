@@ -36,6 +36,11 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { playHeartbeatSound } from "@/components/HeartbeatAudio";
+import GateReader, { BookSampleData } from "@/components/GateReader";
+import BookDetailModal, { BookItemData } from "@/components/BookDetailModal";
+import InfographicFocusedView, { InfographicPostData } from "@/components/InfographicFocusedView";
+import AdminCMSModal from "@/components/AdminCMSModal";
 
 type PlatformKey = "IPN" | "IGC" | "IFR" | "ISR";
 
@@ -110,6 +115,89 @@ const plans = [
 
 const nav = ["Home", "Gate Feed", "Search", "Membership", "Dashboard", "Z Web App"];
 const contentTypes = ["All", "Books", "Infographics", "Podcasts", "Research Reports"];
+
+const sampleBooks: BookItemData[] = [
+  {
+    id: "b1",
+    type: "Books",
+    platform: "IPN",
+    title: "World Policy & Ethical Governance Handbook",
+    subtitle: "Frameworks for Modern Public Affairs and Sustainable Progress",
+    author: "Dr. Zayd Haji",
+    description: "A landmark treatise detailing unified frameworks for international diplomacy, law, public policy, and ecological responsibility across interconnected global networks.",
+    category: "World",
+    tags: ["World", "Global", "Politics"],
+    freeSampleEnabled: true,
+    purchaseLinks: {
+      amazonEnabled: true,
+      amazonUrl: "https://amazon.com",
+      notionPressEnabled: true,
+      notionPressUrl: "https://notionpress.com",
+      googlePlayEnabled: true,
+      googlePlayUrl: "https://play.google.com/store/books",
+    },
+  },
+  {
+    id: "b2",
+    type: "Books",
+    platform: "IGC",
+    title: "Global Productivity & Mindset Playbook",
+    subtitle: "Navigating Time, Leadership and Career Growth",
+    author: "Dr. Zayd Haji",
+    description: "Essential strategies for cultivating personal resilience, effective communication, time mastery, and visionary leadership in modern corporate and entrepreneurial environments.",
+    category: "Productivity & Time Management",
+    tags: ["Productivity", "Leadership", "Career"],
+    freeSampleEnabled: true,
+    purchaseLinks: {
+      amazonEnabled: true,
+      amazonUrl: "https://amazon.com",
+      googlePlayEnabled: true,
+      googlePlayUrl: "https://play.google.com/store/books",
+    },
+  },
+  {
+    id: "b3",
+    type: "Research Reports",
+    platform: "IFR",
+    title: "World Economy & Ethical Finance Outlook",
+    subtitle: "Macroeconomic Analysis, Banking Governance & Shariah Policy",
+    author: "Dr. Zayd Haji",
+    description: "In-depth economic research examining ethical financial systems, public market trends, banking governance, and sustainable investment frameworks across global markets.",
+    category: "Global Economy",
+    tags: ["Finance", "Economy", "Markets"],
+    freeSampleEnabled: true,
+    purchaseLinks: {
+      googlePlayEnabled: true,
+      googlePlayUrl: "https://play.google.com/store/books",
+    },
+  },
+];
+
+const sampleInfographics: InfographicPostData[] = [
+  {
+    id: "info-1",
+    platform: "IPN",
+    title: "Global Public Policy & Environmental Architecture",
+    caption: "A comprehensive 4:5 visual guide breaking down international policy frameworks, ecological targets, law reform, and multi-lateral public networks across 12 strategic global sectors.\n\nKey Highlights:\n• Unified governance frameworks\n• Sustainable economic transitions\n• Environmental protection compliance\n• Multi-stakeholder diplomacy roadmaps",
+    imageUrl: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=80",
+    category: "Environment & Climate",
+    tags: ["World", "Climate", "Policy"],
+    views: 2840,
+    publishedAt: "Today",
+  },
+  {
+    id: "info-2",
+    platform: "IGC",
+    title: "The 7 Pillars of Modern Leadership & Productivity",
+    caption: "Transform your daily workflow with these proven time management techniques, growth mindset principles, and effective communication frameworks designed for leaders and emerging professionals.",
+    imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop&q=80",
+    category: "Career Development",
+    tags: ["Productivity", "Leadership", "Career"],
+    views: 1950,
+    publishedAt: "2 days ago",
+  },
+];
+
 const contentLibrary = [
   { platform: "IPN", type: "Books", title: "World Policy Handbook", category: "World", tags: ["World", "Global", "Politics"], description: "A premium book entry connected to the World category and global public affairs tags." },
   { platform: "IPN", type: "Books", title: "Climate, Society and Progress", category: "Environment & Climate", tags: ["World", "Climate", "Policy"], description: "Book metadata appears when users filter Books with the World tag." },
@@ -173,6 +261,13 @@ export default function Home() {
   const [speed, setSpeed] = useState(1);
   const [repeat, setRepeat] = useState(false);
   const [shuffle, setShuffle] = useState(false);
+
+  // New Modals
+  const [selectedBookModal, setSelectedBookModal] = useState<BookItemData | null>(null);
+  const [selectedInfographicModal, setSelectedInfographicModal] = useState<InfographicPostData | null>(null);
+  const [readerOpen, setReaderOpen] = useState(false);
+  const [adminCmsOpen, setAdminCmsOpen] = useState(false);
+
   const audioRef = useRef<HTMLAudioElement>(null);
   const featured = useMemo(() => episodes.find((item) => item.platform === active) ?? episodes[0], [active, episodes]);
   const nowPlaying = currentEpisode ?? featured;
@@ -230,23 +325,13 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKey);
   });
 
+  // Synchronized Heartbeat Sound on first user interaction or mount
   useEffect(() => {
-    const playBeat = () => {
-      const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextClass) return;
-      const ctx = new AudioContextClass();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.frequency.value = 74;
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.24, ctx.currentTime + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.16);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.18);
+    const triggerHeartbeat = () => {
+      playHeartbeatSound();
     };
-    window.addEventListener("pointerdown", playBeat, { once: true });
-    return () => window.removeEventListener("pointerdown", playBeat);
+    window.addEventListener("pointerdown", triggerHeartbeat, { once: true });
+    return () => window.removeEventListener("pointerdown", triggerHeartbeat);
   }, []);
 
   const toggleAudio = async () => {
@@ -331,7 +416,12 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="rounded-full border border-black/10 bg-white/70 p-3 dark:border-white/10 dark:bg-white/10" aria-label="Toggle theme">{theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}</button>
             {signedIn ? (
-              <button onClick={() => setSignedIn(false)} className="rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-black">Sign Out</button>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setAdminCmsOpen(true)} className="rounded-full bg-[#9a6d35] px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#835b2a] transition flex items-center gap-1.5">
+                  <ShieldCheck size={14} /> Admin CMS
+                </button>
+                <button onClick={() => setSignedIn(false)} className="rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-black">Sign Out</button>
+              </div>
             ) : (
               <button onClick={() => openAuth("sign-in")} className="rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-black">Sign In</button>
             )}
@@ -394,9 +484,9 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8 grid gap-4 lg:grid-cols-3">
-            <FeedCard number="01 Book" icon={<BookOpen />} title="Professional book cards" text="16:25 covers, title, author, 10,000-character descriptions, samples, purchase links and Gate Reader." />
-            <FeedCard number="01 Podcast" icon={<Headphones />} title="Live RSS podcast playback" text="Actual RSS audio, full player, mini player, queue, speed, sleep timer, downloads and Media Session support." />
-            <FeedCard number="01 Infographic" icon={<ImageIcon />} title="Social infographic feed" text="Fixed 4:5 publishing, captions, tags, full-screen view, view count, share and bookmark only." />
+            <FeedCard onClick={() => setSelectedBookModal(sampleBooks[0])} number="01 Book" icon={<BookOpen />} title="Professional book cards" text="16:25 covers, title, author, 10,000-character descriptions, samples, purchase links and Gate Reader." />
+            <FeedCard onClick={() => nowPlaying && void openEpisode(nowPlaying)} number="01 Podcast" icon={<Headphones />} title="Live RSS podcast playback" text="Actual RSS audio, full player, mini player, queue, speed, sleep timer, downloads and Media Session support." />
+            <FeedCard onClick={() => setSelectedInfographicModal(sampleInfographics[0])} number="01 Infographic" icon={<ImageIcon />} title="Social infographic feed" text="Fixed 4:5 publishing, captions, tags, full-screen view, view count, share and bookmark only." />
           </div>
         </div>
       </section>
@@ -404,8 +494,22 @@ export default function Home() {
       <section id="gate-feed" className="mx-auto max-w-7xl px-4 py-14">
         <SectionTitle eyebrow="Post Login Experience" title="Algorithm-based Gate Feed" text="After login, the home experience shows the four platform hubs, the standalone Z promotion and a personalised feed ordered as books, research reports, podcasts and infographics." />
         <div className="mt-8 space-y-8">
-          <Carousel title="Books" icon={<BookOpen />} ratio="aspect-[16/25]" />
-          <Carousel title="Research Reports" icon={<FileText />} ratio="aspect-[16/25]" />
+          <div className="rounded-[2rem] border border-black/10 bg-white/55 p-5 dark:border-white/10 dark:bg-white/5">
+            <div className="mb-4 flex items-center justify-between"><h3 className="flex items-center gap-2 text-xl font-semibold"><BookOpen /> Books</h3><span className="text-sm text-zinc-500">Horizontal slider</span></div>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+              {sampleBooks.map((b, n) => (
+                <button key={b.id} onClick={() => setSelectedBookModal(b)} className="rounded-[1.5rem] border border-black/10 bg-white p-3 text-left transition hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:bg-black/30">
+                  <div className="aspect-[16/25] rounded-[1.1rem] bg-gradient-to-br from-zinc-900 via-[#80623b] to-[#e4d6bc] p-4 text-white flex flex-col justify-between">
+                    <span className="rounded-full bg-white/20 px-2 py-1 text-xs font-bold w-fit">{String(n + 1).padStart(2, "0")} {b.type.slice(0, -1)}</span>
+                    <h4 className="font-serif font-bold text-base leading-snug line-clamp-3">{b.title}</h4>
+                    <span className="text-xs opacity-75">{b.author}</span>
+                  </div>
+                  <p className="mt-2 text-xs font-bold text-[#9a6d35]">{b.platform} • Read Sample</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="rounded-[2rem] border border-black/10 bg-white/55 p-5 dark:border-white/10 dark:bg-white/5">
             <div className="mb-4 flex items-center justify-between"><h3 className="flex items-center gap-2 text-xl font-semibold"><Headphones /> Podcasts</h3><span className="text-sm text-zinc-500">RSS synced</span></div>
             <div className="grid gap-4 md:grid-cols-3">
@@ -423,9 +527,19 @@ export default function Home() {
               ))}
             </div>
           </div>
+
           <div className="grid gap-5 lg:grid-cols-[1fr_.75fr]">
-            <article className="rounded-[2rem] border border-black/10 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5">
-              <div className="aspect-[4/5] rounded-[1.6rem] bg-[linear-gradient(135deg,#111,#a68453)] p-6 text-white"><span className="rounded-full bg-white/20 px-3 py-1 text-xs font-bold">01 Infographic</span><h3 className="mt-24 max-w-sm text-4xl font-semibold tracking-tight">Premium 4:5 knowledge card for immersive reading.</h3></div>
+            <article onClick={() => setSelectedInfographicModal(sampleInfographics[0])} className="rounded-[2rem] border border-black/10 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5 cursor-pointer hover:shadow-xl transition">
+              <div className="relative aspect-[4/5] rounded-[1.6rem] overflow-hidden bg-zinc-900 text-white">
+                <img src={sampleInfographics[0].imageUrl} alt="Infographic post" className="h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent p-6 flex flex-col justify-between">
+                  <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-bold backdrop-blur w-fit">01 Infographic</span>
+                  <div>
+                    <span className="text-xs font-bold text-[#d5a85c]">{sampleInfographics[0].platform} • {sampleInfographics[0].category}</span>
+                    <h3 className="mt-1 text-2xl font-semibold leading-tight">{sampleInfographics[0].title}</h3>
+                  </div>
+                </div>
+              </div>
               <h3 className="mt-5 text-2xl font-semibold">Expandable captions, tags and focused reading</h3>
               <p className="mt-2 text-zinc-600 dark:text-zinc-300">Infographics use a vertical social feed inspired by Instagram, Pinterest, LinkedIn and FinShots, with no likes, comments, reactions or followers.</p>
             </article>
@@ -505,6 +619,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Mini Player */}
       {signedIn && nowPlaying && (
         <div className="fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-5xl rounded-[1.5rem] border border-white/15 bg-[#17130f]/95 p-3 text-white shadow-2xl backdrop-blur-xl">
           <div className="flex items-center gap-3">
@@ -519,6 +634,7 @@ export default function Home() {
         </div>
       )}
 
+      {/* Full Screen Podcast Player */}
       {playerOpen && nowPlaying && signedIn && (
         <div className="fixed inset-0 z-[90] overflow-y-auto bg-[#12100d] text-white">
           <div className="min-h-screen bg-[radial-gradient(circle_at_50%_0%,rgba(214,168,92,.34),transparent_35%),linear-gradient(180deg,#17130f,#050505)] p-4 md:p-8">
@@ -558,6 +674,36 @@ export default function Home() {
         </div>
       )}
 
+      {/* Book Detail Modal */}
+      {selectedBookModal && (
+        <BookDetailModal
+          item={selectedBookModal}
+          onClose={() => setSelectedBookModal(null)}
+          onReadSample={() => {
+            setSelectedBookModal(null);
+            setReaderOpen(true);
+          }}
+        />
+      )}
+
+      {/* Infographic Focused View */}
+      {selectedInfographicModal && (
+        <InfographicFocusedView
+          post={selectedInfographicModal}
+          onClose={() => setSelectedInfographicModal(null)}
+        />
+      )}
+
+      {/* Gate Reader Component */}
+      {readerOpen && (
+        <GateReader onClose={() => setReaderOpen(false)} />
+      )}
+
+      {/* Admin CMS Modal */}
+      {adminCmsOpen && (
+        <AdminCMSModal onClose={() => setAdminCmsOpen(false)} />
+      )}
+
       <footer className="border-t border-black/10 px-4 py-10 dark:border-white/10"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-4 md:flex-row"><Logo compact /><p className="text-sm text-zinc-500">Facebook · Instagram · LinkedIn · X · Gate. Learn. Discover. Grow.</p></div></footer>
       {showWelcome && <div className="fixed right-4 top-24 z-[70] flex items-center gap-3 rounded-3xl border border-black/10 bg-white/95 p-4 shadow-2xl shadow-black/15 animate-in fade-in slide-in-from-top-3 dark:border-white/10 dark:bg-zinc-950/95"><Logo compact /><span className="font-semibold">Greetings, {userName}</span></div>}
       {authOpen && <AuthDialog mode={authMode} setMode={setAuthMode} onClose={() => setAuthOpen(false)} onSubmit={submitAuth} />}
@@ -565,28 +711,20 @@ export default function Home() {
   );
 }
 
-function AuthDialog({ mode, setMode, onClose, onSubmit }: { mode: "sign-in" | "sign-up" | "forgot"; setMode: (mode: "sign-in" | "sign-up" | "forgot") => void; onClose: () => void; onSubmit: (event: React.FormEvent<HTMLFormElement>) => void }) {
-  const title = mode === "sign-in" ? "Sign in to .Gate" : mode === "sign-up" ? "Create your Gate account" : "Reset your password";
-  const button = mode === "forgot" ? "Send Reset Link" : mode === "sign-up" ? "Create Account" : "Sign In";
-  return <div className="fixed inset-0 z-[80] grid place-items-center bg-black/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true"><form onSubmit={onSubmit} className="w-full max-w-md rounded-[2rem] border border-black/10 bg-[#f4f0e8] p-6 shadow-2xl dark:border-white/10 dark:bg-[#11100e]"><div className="flex items-center justify-between"><Logo compact /><button type="button" onClick={onClose} className="rounded-full border border-black/10 px-3 py-1 text-sm dark:border-white/10">Close</button></div><h2 className="mt-8 text-3xl font-semibold tracking-tight">{title}</h2><p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">This prototype signs you in locally and routes you to the correct dashboard. Production auth can connect to Better Auth, email verification, 2FA and social login.</p>{mode === "sign-up" && <label className="mt-6 block text-sm font-semibold">Name<input name="name" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30" placeholder="Zayd Haji" /></label>}<label className="mt-4 block text-sm font-semibold">Email<input name="email" type="email" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30" placeholder="you@example.com" /></label>{mode !== "forgot" && <label className="mt-4 block text-sm font-semibold">Password<input name="password" type="password" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30" placeholder="Enter password" /></label>}<button className="mt-6 w-full rounded-full bg-zinc-950 px-5 py-4 font-bold text-white dark:bg-white dark:text-black">{button}</button><div className="mt-5 flex flex-wrap justify-center gap-3 text-sm"><button type="button" onClick={() => setMode("sign-in")} className="font-semibold">Sign In</button><button type="button" onClick={() => setMode("sign-up")} className="font-semibold">Sign Up</button><button type="button" onClick={() => setMode("forgot")} className="font-semibold">Forgot Password</button></div></form></div>;
-}
-
 function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: string; text: string }) {
-  return <div><p className="text-sm font-bold uppercase tracking-[0.25em] text-[#9a6d35]">{eyebrow}</p><h2 className="mt-3 max-w-4xl text-4xl font-semibold tracking-[-0.04em] md:text-6xl">{title}</h2><p className="mt-4 max-w-3xl text-lg leading-8 text-zinc-650 text-zinc-700 dark:text-zinc-300">{text}</p></div>;
+  return <div><p className="text-sm font-bold uppercase tracking-[0.25em] text-[#9a6d35]">{eyebrow}</p><h2 className="mt-3 max-w-4xl text-4xl font-semibold tracking-[-0.04em] md:text-6xl">{title}</h2><p className="mt-4 max-w-3xl text-lg leading-8 text-zinc-700 dark:text-zinc-300">{text}</p></div>;
 }
 
-function FeedCard({ number, icon, title, text }: { number: string; icon: React.ReactNode; title: string; text: string }) {
-  return <article className="relative rounded-[2rem] border border-black/10 bg-white/70 p-6 dark:border-white/10 dark:bg-black/25"><span className="absolute right-5 top-5 rounded-full bg-zinc-950 px-3 py-1 text-xs font-bold text-white dark:bg-white dark:text-black">{number}</span><div className="text-[#9a6d35]">{icon}</div><h3 className="mt-8 text-2xl font-semibold">{title}</h3><p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{text}</p><div className="mt-5 flex gap-3 text-sm"><span className="flex items-center gap-1"><BarChart3 size={16} /> View Count</span><span>Share</span><span className="flex items-center gap-1"><Bookmark size={16} /> Bookmark</span></div></article>;
-}
-
-function Carousel({ title, icon, ratio }: { title: string; icon: React.ReactNode; ratio: string }) {
-  return <div className="rounded-[2rem] border border-black/10 bg-white/55 p-5 dark:border-white/10 dark:bg-white/5"><div className="mb-4 flex items-center justify-between"><h3 className="flex items-center gap-2 text-xl font-semibold">{icon} {title}</h3><span className="text-sm text-zinc-500">Horizontal slider</span></div><div className="grid grid-cols-2 gap-4 md:grid-cols-4">{[1, 2, 3, 4].map((n) => <article key={n} className="rounded-[1.5rem] border border-black/10 bg-white p-3 dark:border-white/10 dark:bg-black/30"><div className={`${ratio} rounded-[1.1rem] bg-gradient-to-br from-zinc-900 via-[#80623b] to-[#e4d6bc] p-3 text-white`}><span className="rounded-full bg-white/20 px-2 py-1 text-xs font-bold">{String(n).padStart(2, "0")} {title.slice(0, -1)}</span></div><h4 className="mt-3 font-semibold">Gate premium {title.toLowerCase()} title</h4><p className="mt-1 text-sm text-zinc-500">Author · Read More</p></article>)}</div></div>;
+function FeedCard({ number, icon, title, text, onClick }: { number: string; icon: React.ReactNode; title: string; text: string; onClick?: () => void }) {
+  return <article onClick={onClick} className="relative rounded-[2rem] border border-black/10 bg-white/70 p-6 dark:border-white/10 dark:bg-black/25 cursor-pointer hover:shadow-xl transition"><span className="absolute right-5 top-5 rounded-full bg-zinc-950 px-3 py-1 text-xs font-bold text-white dark:bg-white dark:text-black">{number}</span><div className="text-[#9a6d35]">{icon}</div><h3 className="mt-8 text-2xl font-semibold">{title}</h3><p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{text}</p><div className="mt-5 flex gap-3 text-sm"><span className="flex items-center gap-1"><BarChart3 size={16} /> View Count</span><span>Share</span><span className="flex items-center gap-1"><Bookmark size={16} /> Bookmark</span></div></article>;
 }
 
 function Metric({ title, value, icon }: { title: string; value: string; icon: React.ReactNode }) {
   return <div className="rounded-[2rem] border border-black/10 bg-white/65 p-6 dark:border-white/10 dark:bg-white/5"><div className="text-[#9a6d35]">{icon}</div><p className="mt-8 text-sm text-zinc-500">{title}</p><p className="mt-2 text-4xl font-bold tracking-tight">{value}</p></div>;
 }
 
-function Spec({ title, items }: { title: string; items: string[] }) {
-  return <div className="rounded-[2rem] border border-black/10 bg-white/65 p-6 dark:border-white/10 dark:bg-white/5"><h3 className="text-xl font-semibold">{title}</h3><div className="mt-4 space-y-3">{items.map((item) => <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-300" key={item}><Check size={16} className="text-[#9a6d35]" />{item}</div>)}</div></div>;
+function AuthDialog({ mode, setMode, onClose, onSubmit }: { mode: "sign-in" | "sign-up" | "forgot"; setMode: (mode: "sign-in" | "sign-up" | "forgot") => void; onClose: () => void; onSubmit: (event: React.FormEvent<HTMLFormElement>) => void }) {
+  const title = mode === "sign-in" ? "Sign in to .Gate" : mode === "sign-up" ? "Create your Gate account" : "Reset your password";
+  const button = mode === "forgot" ? "Send Reset Link" : mode === "sign-up" ? "Create Account" : "Sign In";
+  return <div className="fixed inset-0 z-[80] grid place-items-center bg-black/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true"><form onSubmit={onSubmit} className="w-full max-w-md rounded-[2rem] border border-black/10 bg-[#f4f0e8] p-6 shadow-2xl dark:border-white/10 dark:bg-[#11100e]"><div className="flex items-center justify-between"><Logo compact /><button type="button" onClick={onClose} className="rounded-full border border-black/10 px-3 py-1 text-sm dark:border-white/10">Close</button></div><h2 className="mt-8 text-3xl font-semibold tracking-tight">{title}</h2><p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">This prototype signs you in locally and routes you to the correct dashboard. Production auth can connect to Better Auth, email verification, 2FA and social login.</p>{mode === "sign-up" && <label className="mt-6 block text-sm font-semibold">Name<input name="name" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30" placeholder="Zayd Haji" /></label>}<label className="mt-4 block text-sm font-semibold">Email<input name="email" type="email" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30" placeholder="you@example.com" /></label>{mode !== "forgot" && <label className="mt-4 block text-sm font-semibold">Password<input name="password" type="password" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30" placeholder="Enter password" /></label>}<button className="mt-6 w-full rounded-full bg-zinc-950 px-5 py-4 font-bold text-white dark:bg-white dark:text-black">{button}</button><div className="mt-5 flex flex-wrap justify-center gap-3 text-sm"><button type="button" onClick={() => setMode("sign-in")} className="font-semibold">Sign In</button><button type="button" onClick={() => setMode("sign-up")} className="font-semibold">Sign Up</button><button type="button" onClick={() => setMode("forgot")} className="font-semibold">Forgot Password</button></div></form></div>;
 }
