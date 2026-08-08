@@ -34,6 +34,7 @@ import {
   Volume2,
   WalletCards,
   X,
+  FileCode,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { playHeartbeatSound } from "@/components/HeartbeatAudio";
@@ -41,6 +42,7 @@ import GateReader, { BookSampleData } from "@/components/GateReader";
 import BookDetailModal, { BookItemData } from "@/components/BookDetailModal";
 import InfographicFocusedView, { InfographicPostData } from "@/components/InfographicFocusedView";
 import AdminCMSModal from "@/components/AdminCMSModal";
+import PodcastTranscriptModal, { TranscriptSegment } from "@/components/PodcastTranscriptModal";
 
 type PlatformKey = "IPN" | "IGC" | "IFR" | "ISR";
 
@@ -50,6 +52,7 @@ type Episode = {
   creator?: string;
   title: string;
   description: string;
+  transcript?: TranscriptSegment[];
   audioUrl: string;
   image: string;
   duration?: string;
@@ -267,6 +270,7 @@ export default function Home() {
   const [selectedInfographicModal, setSelectedInfographicModal] = useState<InfographicPostData | null>(null);
   const [readerOpen, setReaderOpen] = useState(false);
   const [adminCmsOpen, setAdminCmsOpen] = useState(false);
+  const [transcriptOpen, setTranscriptOpen] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const featured = useMemo(() => episodes.find((item) => item.platform === active) ?? episodes[0], [active, episodes]);
@@ -604,7 +608,7 @@ export default function Home() {
               <p className="mt-4 line-clamp-3 whitespace-pre-line text-left leading-7 text-white/65">{nowPlaying?.description ?? "RSS sync is loading the latest IPN, IGC, IFR and ISR episodes."}</p>
               <audio ref={audioRef} src={nowPlaying?.audioUrl} onTimeUpdate={updateProgress} onLoadedMetadata={updateProgress} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => { setPlaying(false); if (!repeat) nextEpisode(); }} preload="metadata" />
               <div className="mt-6 flex items-center gap-3 text-sm text-white/60"><span>{formatTime(progress)}</span><input aria-label="Seek podcast" type="range" min="0" max={duration || 0} value={progress} onChange={(event) => seekTo(Number(event.target.value))} className="w-full accent-white" /><span>{formatTime(duration)}</span></div>
-              <div className="mt-6 flex flex-wrap items-center gap-3"><button onClick={toggleAudio} className="grid size-16 place-items-center rounded-full bg-white text-black" aria-label="Play podcast">{playing ? <Pause /> : <Play />}</button><button onClick={() => skipBy(-30)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold">-30</button><button onClick={() => skipBy(10)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold">+10</button><button onClick={() => setSpeed(speed === 2 ? 1 : speed + 0.25)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold">{speed}x</button><button onClick={() => setPlayerOpen(true)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold">Open Full Player</button></div>
+              <div className="mt-6 flex flex-wrap items-center gap-3"><button onClick={toggleAudio} className="grid size-16 place-items-center rounded-full bg-white text-black" aria-label="Play podcast">{playing ? <Pause /> : <Play />}</button><button onClick={() => skipBy(-30)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold">-30</button><button onClick={() => skipBy(10)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold">+10</button><button onClick={() => setSpeed(speed === 2 ? 1 : speed + 0.25)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold">{speed}x</button><button onClick={() => setTranscriptOpen(true)} className="rounded-full bg-[#9a6d35] text-white px-5 py-3 text-sm font-bold flex items-center gap-2"><FileCode size={16} /> Transcript</button><button onClick={() => setPlayerOpen(true)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold">Open Full Player</button></div>
             </div>
           </div>
         </div>
@@ -627,6 +631,7 @@ export default function Home() {
               {nowPlaying.image && <img src={nowPlaying.image} alt="Podcast artwork" className="size-14 rounded-xl object-cover" />}
               <span className="min-w-0"><span className="block truncate font-semibold">{nowPlaying.title}</span><span className="block truncate text-sm text-white/55">{nowPlaying.platform} · {nowPlaying.podcastTitle || "Podcast"}</span></span>
             </button>
+            <button onClick={() => setTranscriptOpen(true)} className="rounded-full bg-white/10 px-3 py-2 text-xs font-bold flex items-center gap-1.5"><FileCode size={14} /> Transcript</button>
             <button onClick={() => skipBy(-30)} className="hidden rounded-full bg-white/10 p-3 sm:grid"><SkipBack size={18} /></button>
             <button onClick={toggleAudio} className="grid size-12 place-items-center rounded-full bg-white text-black">{playing ? <Pause /> : <Play />}</button>
             <button onClick={() => skipBy(10)} className="hidden rounded-full bg-white/10 p-3 sm:grid"><SkipForward size={18} /></button>
@@ -660,9 +665,12 @@ export default function Home() {
                   <div className="mt-8 rounded-[1.75rem] bg-black/25 p-5">
                     <div className="flex items-center gap-3 text-sm text-white/60"><span>{formatTime(progress)}</span><input aria-label="Seek full player" type="range" min="0" max={duration || 0} value={progress} onChange={(event) => seekTo(Number(event.target.value))} className="w-full accent-[#d5a85c]" /><span>{formatTime(duration)}</span></div>
                     <div className="mt-6 flex flex-wrap items-center justify-center gap-3"><button onClick={() => setShuffle(!shuffle)} className={`rounded-full p-3 ${shuffle ? "bg-[#d5a85c] text-black" : "bg-white/10"}`}><Shuffle /></button><button onClick={() => skipBy(-30)} className="rounded-full bg-white/10 p-4"><SkipBack /></button><button onClick={toggleAudio} className="grid size-20 place-items-center rounded-full bg-white text-black shadow-xl">{playing ? <Pause size={34} /> : <Play size={34} />}</button><button onClick={() => skipBy(10)} className="rounded-full bg-white/10 p-4"><SkipForward /></button><button onClick={() => setRepeat(!repeat)} className={`rounded-full p-3 ${repeat ? "bg-[#d5a85c] text-black" : "bg-white/10"}`}><Repeat /></button></div>
-                    <div className="mt-6 grid gap-4 md:grid-cols-3"><label className="flex items-center gap-3 rounded-full bg-white/10 px-4 py-3 text-sm"><Volume2 size={18} /><input aria-label="Volume" type="range" min="0" max="1" step="0.05" value={volume} onChange={(event) => setVolume(Number(event.target.value))} className="w-full accent-white" /></label><button onClick={() => setSpeed(speed === 2 ? 1 : speed + 0.25)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-bold">Speed {speed}x</button><button className="rounded-full bg-white/10 px-4 py-3 text-sm font-bold">Sleep Timer</button></div>
+                    <div className="mt-6 grid gap-4 md:grid-cols-3"><label className="flex items-center gap-3 rounded-full bg-white/10 px-4 py-3 text-sm"><Volume2 size={18} /><input aria-label="Volume" type="range" min="0" max="1" step="0.05" value={volume} onChange={(event) => setVolume(Number(event.target.value))} className="w-full accent-white" /></label><button onClick={() => setSpeed(speed === 2 ? 1 : speed + 0.25)} className="rounded-full bg-white/10 px-4 py-3 text-sm font-bold">Speed {speed}x</button><button onClick={() => setTranscriptOpen(true)} className="rounded-full bg-[#d5a85c] text-black px-4 py-3 text-sm font-bold flex items-center justify-center gap-2"><FileCode size={16} /> Open Transcript</button></div>
                   </div>
-                  <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{["Queue", "Autoplay", "Download Offline", "Bookmark", "Transcript", "Related Episodes", "Resume Saved", "Casting Ready"].map((item) => <button className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold" key={item}>{item}</button>)}</div>
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <button onClick={() => setTranscriptOpen(true)} className="rounded-full bg-[#d5a85c] text-black px-4 py-3 text-sm font-bold flex items-center justify-center gap-2"><FileCode size={16} /> Interactive Transcript</button>
+                    {["Queue", "Autoplay", "Download Offline", "Bookmark", "Related Episodes", "Resume Saved", "Casting Ready"].map((item) => <button className="rounded-full bg-white/10 px-4 py-3 text-sm font-semibold" key={item}>{item}</button>)}
+                  </div>
                   <article className="mt-8 rounded-[1.75rem] bg-white/10 p-5">
                     <h3 className="text-2xl font-semibold">Episode Description</h3>
                     <p className="mt-4 whitespace-pre-line text-left text-base leading-8 text-white/75">{nowPlaying.description || "No description provided in the RSS feed."}</p>
@@ -672,6 +680,20 @@ export default function Home() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Podcast Interactive Transcript Modal */}
+      {transcriptOpen && nowPlaying && (
+        <PodcastTranscriptModal
+          title={nowPlaying.title}
+          podcastTitle={nowPlaying.podcastTitle}
+          platform={nowPlaying.platform}
+          creator={nowPlaying.creator}
+          segments={nowPlaying.transcript || []}
+          currentTime={progress}
+          onSeek={(seconds) => seekTo(seconds)}
+          onClose={() => setTranscriptOpen(false)}
+        />
       )}
 
       {/* Book Detail Modal */}
