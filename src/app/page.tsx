@@ -43,6 +43,7 @@ import BookDetailModal, { BookItemData } from "@/components/BookDetailModal";
 import InfographicFocusedView, { InfographicPostData } from "@/components/InfographicFocusedView";
 import AdminCMSModal from "@/components/AdminCMSModal";
 import PodcastTranscriptModal, { TranscriptSegment } from "@/components/PodcastTranscriptModal";
+import UserProfileAnalyticsModal from "@/components/UserProfileAnalyticsModal";
 
 type PlatformKey = "IPN" | "IGC" | "IFR" | "ISR";
 
@@ -272,6 +273,7 @@ export default function Home() {
   const [readerOpen, setReaderOpen] = useState(false);
   const [adminCmsOpen, setAdminCmsOpen] = useState(false);
   const [transcriptOpen, setTranscriptOpen] = useState(false);
+  const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const featured = useMemo(() => episodes.find((item) => item.platform === active) ?? episodes[0], [active, episodes]);
@@ -440,7 +442,16 @@ export default function Home() {
             ) : (
               <button onClick={() => openAuth("sign-in")} className="rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-black">Sign In</button>
             )}
-            <Menu className="lg:hidden" />
+            
+            {/* Functional 3-Bar Menu Icon that opens Spotify-style User Profile & Growth Analytics */}
+            <button
+              onClick={() => setUserProfileModalOpen(true)}
+              className="rounded-full border border-black/10 bg-white/70 p-3 hover:bg-black/5 dark:border-white/10 dark:bg-white/10 transition"
+              aria-label="Open User Profile & Analytics"
+              title="Open User Profile & Analytics"
+            >
+              <Menu size={18} />
+            </button>
           </div>
         </div>
       </header>
@@ -586,7 +597,12 @@ export default function Home() {
         <div className="mt-8 grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
           <div className="rounded-[2rem] border border-black/10 bg-white/65 p-6 dark:border-white/10 dark:bg-white/5">
             <div className="flex items-center gap-4"><div className="grid size-16 place-items-center rounded-full bg-zinc-950 text-white"><User /></div><div><h3 className="text-2xl font-semibold">Greetings, {signedIn ? userName : "Guest"}</h3><p className="text-sm text-zinc-500">{signedIn ? (userRole === "admin" ? "Gate System Administrator" : "Active Gate Member") : "Sign in to activate your dashboard"}</p></div></div>
-            <div className="mt-6 grid gap-3">{["Profile Photo", "Name", "Bio", "Interests", "Membership", "Reading History", "Listening History", "Downloads", "Bookmarks", "Recently Viewed", "Progress Timeline", "Activity Calendar"].map((item) => <div className="flex justify-between rounded-2xl bg-black/5 p-3 dark:bg-white/10" key={item}><span>{item}</span><Check size={18} /></div>)}</div>
+            <div className="mt-6 grid gap-3">
+              <button onClick={() => setUserProfileModalOpen(true)} className="flex items-center justify-between rounded-2xl bg-black/5 hover:bg-black/10 p-3 font-semibold transition dark:bg-white/10 dark:hover:bg-white/20">
+                <span>View & Edit Full Profile</span> <ChevronRight size={18} />
+              </button>
+              {["Profile Photo", "Name", "Bio", "Interests", "Membership", "Reading History", "Listening History", "Downloads", "Bookmarks", "Recently Viewed", "Progress Timeline", "Activity Calendar"].map((item) => <div className="flex justify-between rounded-2xl bg-black/5 p-3 dark:bg-white/10" key={item}><span>{item}</span><Check size={18} /></div>)}
+            </div>
           </div>
           <div className="grid gap-5 md:grid-cols-2">
             <Metric title="Reading Hours" value="42" icon={<BookOpen />} />
@@ -691,6 +707,17 @@ export default function Home() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* User Profile & Growth Analytics Modal (Opened via 3-bar menu) */}
+      {userProfileModalOpen && (
+        <UserProfileAnalyticsModal
+          userName={userName}
+          userEmail={`${userName.toLowerCase().replaceAll(" ", "")}@drzgate.com`}
+          userRole={userRole}
+          onClose={() => setUserProfileModalOpen(false)}
+          onOpenAdminCms={() => setAdminCmsOpen(true)}
+        />
       )}
 
       {/* Podcast Interactive Transcript Modal */}
