@@ -130,37 +130,74 @@ body {
   min-width: 320px;
 }
 
+/* Enlarged Gate Wordmark Typography */
 .gate-wordmark {
   font-family: "Hoefler Text", var(--font-cormorant), Georgia, serif;
   font-weight: 600;
-  letter-spacing: -0.055em;
-  line-height: 0.9;
+  letter-spacing: -0.05em;
+  line-height: 0.95;
+  display: inline-block;
+  transform-origin: left center;
 }
 
+/* Wrapper to align focus circle precisely with middle vertical center of letter G */
+.gate-logo-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38em;
+  position: relative;
+  vertical-align: middle;
+}
+
+/* Precisely Centered Focus Circle (Dot) */
 .gate-dot {
   display: inline-block;
-  width: 0.62em;
-  height: 0.62em;
-  min-width: 1.15rem;
-  min-height: 1.15rem;
+  width: 0.52em;
+  height: 0.52em;
   border-radius: 999px;
   background: currentColor;
+  flex-shrink: 0;
   transform-origin: center;
+  align-self: center;
+  margin-top: -0.02em; /* Aligns with exact vertical center of letter G */
 }
 
+/* Premium Heartbeat Animation (subtle expand & contract pulse) */
 .heartbeat {
-  animation: gate-heartbeat 1.42s ease-in-out 0s 2, gate-settle 0.5s ease-out 2.84s both;
+  animation: gate-heartbeat 1.42s ease-in-out infinite;
 }
 
 @keyframes gate-heartbeat {
-  0%, 28%, 70%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
-  12% { transform: scale(1.28); filter: drop-shadow(0 0 18px rgba(154,109,53,.35)); }
-  42% { transform: scale(1.18); filter: drop-shadow(0 0 12px rgba(154,109,53,.25)); }
+  0%, 28%, 70%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(154, 109, 53, 0));
+  }
+  12% {
+    transform: scale(1.32);
+    filter: drop-shadow(0 0 12px rgba(154, 109, 53, 0.4));
+  }
+  42% {
+    transform: scale(1.16);
+    filter: drop-shadow(0 0 6px rgba(154, 109, 53, 0.25));
+  }
 }
 
-@keyframes gate-settle {
-  from { transform: scale(1.08); }
-  to { transform: scale(1); }
+/* Smooth Text Reveal from behind the focus circle on load/refresh */
+.gate-reveal {
+  animation: gate-text-reveal 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes gate-text-reveal {
+  0% {
+    opacity: 0;
+    transform: translateX(-18px) scale(0.95);
+    filter: blur(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+  }
 }
 
 .line-clamp-3,

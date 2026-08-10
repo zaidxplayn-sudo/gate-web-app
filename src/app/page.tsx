@@ -214,11 +214,14 @@ const contentLibrary = [
 ] as const;
 const globalTags = ["World", "Global", "Politics", "Climate", "Productivity", "Leadership", "Finance", "Economy", "Theology", "Society", "Governance", "Markets", "Career"];
 
+/* Enlarged Gate Logo Component with Precisely Centered Focus Circle (Dot) & Heartbeat Reveal */
 function Logo({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="flex items-center gap-2" aria-label=".Gate">
+    <div className="gate-logo-wrapper cursor-pointer select-none" aria-label=".Gate">
       <span className="gate-dot heartbeat" />
-      <span className={`${compact ? "text-2xl" : "text-4xl"} gate-wordmark`}>Gate</span>
+      <span className={`${compact ? "text-3xl sm:text-4xl" : "text-6xl sm:text-7xl"} gate-wordmark gate-reveal`}>
+        Gate
+      </span>
     </div>
   );
 }
@@ -332,13 +335,21 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKey);
   });
 
-  // Synchronized Heartbeat Sound on first user interaction or mount
+  // Synchronized Heartbeat Sound & Logo Reveal on every page load/refresh
   useEffect(() => {
+    // Attempt automatic heartbeat audio on load/refresh
+    playHeartbeatSound();
+
+    // Fallback trigger for restricted autoplay policies on first permitted user interaction
     const triggerHeartbeat = () => {
       playHeartbeatSound();
     };
     window.addEventListener("pointerdown", triggerHeartbeat, { once: true });
-    return () => window.removeEventListener("pointerdown", triggerHeartbeat);
+    window.addEventListener("keydown", triggerHeartbeat, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", triggerHeartbeat);
+      window.removeEventListener("keydown", triggerHeartbeat);
+    };
   }, []);
 
   const toggleAudio = async () => {
