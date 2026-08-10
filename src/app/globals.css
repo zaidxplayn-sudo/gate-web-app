@@ -149,17 +149,17 @@ body {
   vertical-align: middle;
 }
 
-/* Enlarged Focus Circle (Dot) - Sized to match lowercase 'o' font height (~0.84em) */
+/* Extra Prominent Focus Circle (Dot) - Scaled to 1.15em */
 .gate-dot {
   display: inline-block;
-  width: 0.84em;
-  height: 0.84em;
+  width: 1.15em;
+  height: 1.15em;
   border-radius: 999px;
   background: currentColor;
   flex-shrink: 0;
   transform-origin: center;
   align-self: center;
-  margin-top: -0.05em; /* Aligns with middle alignment of letter G */
+  margin-top: -0.04em; /* Aligns precisely with vertical center of letter G */
 }
 
 /* Premium Heartbeat Animation (subtle expand & contract pulse) */
@@ -173,12 +173,12 @@ body {
     filter: drop-shadow(0 0 0 rgba(154, 109, 53, 0));
   }
   12% {
-    transform: scale(1.28);
-    filter: drop-shadow(0 0 16px rgba(154, 109, 53, 0.45));
+    transform: scale(1.24);
+    filter: drop-shadow(0 0 18px rgba(154, 109, 53, 0.5));
   }
   42% {
-    transform: scale(1.14);
-    filter: drop-shadow(0 0 8px rgba(154, 109, 53, 0.25));
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 9px rgba(154, 109, 53, 0.3));
   }
 }
 
