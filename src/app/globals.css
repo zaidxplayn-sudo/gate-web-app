@@ -144,22 +144,22 @@ body {
 .gate-logo-wrapper {
   display: inline-flex;
   align-items: center;
-  gap: 0.3em;
+  gap: 0.35em;
   position: relative;
   vertical-align: middle;
 }
 
-/* Extra Prominent Focus Circle (Dot) - Scaled to 1.15em */
+/* Prominent Focus Circle (Dot) - Scaled to 1.55em to match diameter of lowercase 'a' font size */
 .gate-dot {
   display: inline-block;
-  width: 1.15em;
-  height: 1.15em;
+  width: 1.55em;
+  height: 1.55em;
   border-radius: 999px;
   background: currentColor;
   flex-shrink: 0;
   transform-origin: center;
   align-self: center;
-  margin-top: -0.04em; /* Aligns precisely with vertical center of letter G */
+  margin-top: -0.02em; /* Aligns precisely with vertical middle center of letter G */
 }
 
 /* Premium Heartbeat Animation (subtle expand & contract pulse) */
@@ -173,12 +173,12 @@ body {
     filter: drop-shadow(0 0 0 rgba(154, 109, 53, 0));
   }
   12% {
-    transform: scale(1.24);
-    filter: drop-shadow(0 0 18px rgba(154, 109, 53, 0.5));
+    transform: scale(1.22);
+    filter: drop-shadow(0 0 20px rgba(154, 109, 53, 0.5));
   }
   42% {
-    transform: scale(1.12);
-    filter: drop-shadow(0 0 9px rgba(154, 109, 53, 0.3));
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 10px rgba(154, 109, 53, 0.3));
   }
 }
 
@@ -190,7 +190,7 @@ body {
 @keyframes gate-text-reveal {
   0% {
     opacity: 0;
-    transform: translateX(-18px) scale(0.95);
+    transform: translateX(-22px) scale(0.95);
     filter: blur(5px);
   }
   100% {
