@@ -624,9 +624,68 @@ export default function Home() {
       </section>
 
       <section id="membership" className="mx-auto max-w-7xl px-4 py-14">
-        <SectionTitle eyebrow="Gate Membership Pricing" title="One subscription unlocks IPN, IGC, IFR and ISR" text="All plans include identical premium benefits; only duration and savings differ. Live exchange rates localise prices before secure checkout." />
-        <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {plans.map(([name, price, label, detail]) => <div key={name} className={`rounded-[2rem] border p-6 ${name === "1 Year" ? "border-zinc-950 bg-zinc-950 text-white shadow-2xl shadow-black/20 dark:border-white" : "border-black/10 bg-white/65 dark:border-white/10 dark:bg-white/5"}`}><div className="flex items-center justify-between"><h3 className="text-2xl font-semibold">{name}</h3><span className="rounded-full bg-white/20 px-3 py-1 text-sm font-bold">{label}</span></div><p className="mt-6 text-4xl font-bold">{price}</p><p className="mt-3 text-sm opacity-75">{detail}</p><button className={`mt-6 w-full rounded-full px-5 py-3 font-bold ${name === "1 Year" ? "bg-white text-black" : "bg-zinc-950 text-white dark:bg-white dark:text-black"}`}>Choose Plan</button></div>)}
+        <div className="overflow-hidden rounded-[3rem] border border-black/10 bg-[#15110c] text-white shadow-2xl shadow-black/20 dark:border-white/10">
+          <div className="grid gap-0 lg:grid-cols-[1.05fr_.95fr]">
+            <div className="relative p-8 md:p-12">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(213,168,92,.35),transparent_28%),radial-gradient(circle_at_90%_20%,rgba(255,255,255,.12),transparent_22%)]" />
+              <div className="relative">
+                <div className="flex flex-wrap gap-3">
+                  <span className="rounded-full border border-[#d5a85c]/40 bg-[#d5a85c]/15 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-[#f4d39b]">One Time Launch Offer</span>
+                  <span className="rounded-full bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-black">Lifetime Access</span>
+                </div>
+                <h2 className="mt-8 max-w-3xl font-serif text-5xl font-semibold leading-[0.95] tracking-[-0.05em] md:text-7xl">Pay Once. Learn for a Lifetime.</h2>
+                <p className="mt-6 max-w-2xl text-lg leading-8 text-white/75">A founder-led .Gate lifetime membership launch offer by Zayd Haji, Founder of .Gate, created for people who want their daily screen time to compound into knowledge instead of disappearing into noise.</p>
+
+                <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-[2rem] border border-white/10 bg-white/10 p-5 backdrop-blur">
+                    <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f4d39b]">One Payment</p>
+                    <p className="mt-3 text-5xl font-black tracking-tight">₹9,999</p>
+                    <p className="mt-2 text-sm text-white/60 line-through">Recurring multi-year subscriptions</p>
+                  </div>
+                  <div className="rounded-[2rem] border border-white/10 bg-white/10 p-5 backdrop-blur">
+                    <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f4d39b]">First Year Equivalent</p>
+                    <p className="mt-3 text-2xl font-black">₹27.39/day</p>
+                    <p className="mt-1 text-2xl font-black">₹833.25/month</p>
+                    <p className="mt-2 text-sm text-white/60">Effective cost keeps falling the longer you stay.</p>
+                  </div>
+                </div>
+
+                <p className="mt-8 rounded-[2rem] border border-[#d5a85c]/30 bg-[#d5a85c]/10 p-5 font-serif text-2xl leading-snug text-[#ffe3af]">Your daily screen time already has a cost; make some of that time compound into knowledge.</p>
+
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <button className="rounded-full bg-white px-7 py-4 text-sm font-black text-black shadow-xl transition hover:scale-[1.02]">Claim Lifetime Membership — ₹9,999</button>
+                  <a href="#gate-feed" className="rounded-full border border-white/25 bg-white/10 px-7 py-4 text-sm font-black text-white backdrop-blur transition hover:bg-white/20">Explore What’s Inside Gate</a>
+                </div>
+                <p className="mt-4 flex items-center gap-2 text-sm text-white/55"><ShieldCheck size={16} /> Secure one-time payment. No recurring billing for this lifetime launch membership.</p>
+              </div>
+            </div>
+
+            <div className="border-t border-white/10 bg-white/[0.06] p-8 md:p-12 lg:border-l lg:border-t-0">
+              <h3 className="text-2xl font-semibold tracking-tight">Lifetime access includes</h3>
+              <div className="mt-6 grid gap-3">
+                {["IPN | International Public Network", "IGC | Inspire Guide Connect", "IFR | Integrity Finance Research", "ISR | Ideological Studies Research"].map((item) => (
+                  <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/20 p-4" key={item}>
+                    <span className="font-semibold">{item}</span>
+                    <Check className="text-[#d5a85c]" size={18} />
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 rounded-[2rem] border border-white/10 bg-black/20 p-5">
+                <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#f4d39b]">Value Stack</p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {["Books", "Podcasts", "Infographics", "Research Reports", "Eligible premium learning resources", "Member downloads", "Progress tracking", "Knowledge discovery feed"].map((item) => (
+                    <div className="flex items-center gap-2 text-sm text-white/80" key={item}><Check size={16} className="text-[#d5a85c]" /> {item}</div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-[2rem] bg-white p-5 text-black">
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#9a6d35]">Founder Led Trust</p>
+                <p className="mt-3 text-sm leading-7 text-zinc-700">Built around the vision of Zayd Haji, .Gate is positioned as a long-term knowledge ecosystem, not a short-term content subscription. One considered payment unlocks access across the four Gate knowledge platforms for life.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
