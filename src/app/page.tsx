@@ -44,6 +44,8 @@ import InfographicFocusedView, { InfographicPostData } from "@/components/Infogr
 import AdminCMSModal from "@/components/AdminCMSModal";
 import PodcastTranscriptModal, { TranscriptSegment } from "@/components/PodcastTranscriptModal";
 import UserProfileAnalyticsModal from "@/components/UserProfileAnalyticsModal";
+import ServiceLandingModal from "@/components/ServiceLandingModal";
+import { hubs, hubByKey } from "@/lib/gate-data";
 
 type PlatformKey = "IPN" | "IGC" | "IFR" | "ISR";
 
@@ -117,7 +119,7 @@ const plans = [
   ["9 Years", "₹5,799", "Legacy", "Only ₹53.69/month, best long-term value."],
 ];
 
-const nav = ["Home", "Gate Feed", "Search", "Membership", "Dashboard", "Z Web App"];
+const nav = ["Home", "Services", "Gate Feed", "Search", "Membership", "Dashboard", "Z Web App"];
 const contentTypes = ["All", "Books", "Infographics", "Podcasts", "Research Reports"];
 
 const sampleBooks: BookItemData[] = [
@@ -287,6 +289,7 @@ export default function Home() {
   const [adminCmsOpen, setAdminCmsOpen] = useState(false);
   const [transcriptOpen, setTranscriptOpen] = useState(false);
   const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<{ hub: (typeof hubs)[number]; service: (typeof hubs)[number]["services"][number] } | null>(null);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const featured = useMemo(() => episodes.find((item) => item.platform === active) ?? episodes[0], [active, episodes]);
@@ -307,6 +310,7 @@ export default function Home() {
   useEffect(() => {
     setSelectedCategory("All");
     setSelectedTag("All");
+    setSelectedService(null);
   }, [active]);
 
   useEffect(() => {
@@ -552,6 +556,31 @@ export default function Home() {
             <FeedCard onClick={() => nowPlaying && void openEpisode(nowPlaying)} number="01 Podcast" icon={<Headphones />} title="Live RSS podcast playback" text="Actual RSS audio, full player, mini player, queue, speed, sleep timer, downloads and Media Session support." />
             <FeedCard onClick={() => setSelectedInfographicModal(sampleInfographics[0])} number="01 Infographic" icon={<ImageIcon />} title="Social infographic feed" text="Fixed 4:5 publishing, captions, tags, full-screen view, view count, share and bookmark only." />
           </div>
+        </div>
+      </section>
+
+      <section id="hub-services" className="mx-auto max-w-7xl px-4 py-14">
+        <SectionTitle eyebrow="Hub Services" title={`${hubByKey(active).name} services`} text="Explore the professional services offered by each Gate hub. Open any service to see what it provides, who it is for, the engagement process and how to enquire. No login required." />
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {hubByKey(active).services.map((service) => {
+            const Icon = service.icon;
+            return (
+              <button key={service.slug} onClick={() => setSelectedService({ hub: hubByKey(active), service })} className="group rounded-[2rem] border border-black/10 bg-white/65 p-6 text-left transition hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:bg-white/5">
+                <div className="flex items-center justify-between">
+                  <span className="grid size-14 place-items-center rounded-2xl bg-zinc-950 text-white dark:bg-white dark:text-black"><Icon size={26} /></span>
+                  <ChevronRight className="text-zinc-400 transition group-hover:translate-x-1 group-hover:text-zinc-950 dark:group-hover:text-white" />
+                </div>
+                <h3 className="mt-6 text-2xl font-semibold">{service.name}</h3>
+                <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{service.short}</p>
+                <p className="mt-5 text-sm font-bold text-[#9a6d35]">{service.pricing}</p>
+              </button>
+            );
+          })}
+        </div>
+        <div className="mt-8 flex flex-wrap gap-3">
+          {(Object.keys(platforms) as PlatformKey[]).filter((id) => id !== active).map((id) => (
+            <button key={id} onClick={() => { setActive(id); setSelectedCategory("All"); setSelectedTag("All"); }} className="rounded-full border border-black/10 bg-white/60 px-5 py-3 text-sm font-semibold dark:border-white/10 dark:bg-white/10">View {platforms[id].name} services</button>
+          ))}
         </div>
       </section>
 
@@ -873,6 +902,15 @@ export default function Home() {
         <InfographicFocusedView
           post={selectedInfographicModal}
           onClose={() => setSelectedInfographicModal(null)}
+        />
+      )}
+
+      {/* Hub Service Landing Page (Public, no login required) */}
+      {selectedService && (
+        <ServiceLandingModal
+          hub={selectedService.hub}
+          service={selectedService.service}
+          onClose={() => setSelectedService(null)}
         />
       )}
 
