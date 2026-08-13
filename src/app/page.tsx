@@ -764,7 +764,7 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-14">
-        <SectionTitle eyebrow="Podcast Player" title="Full-screen playback, mini-player and real RSS audio" text="The app fetches RSS episodes through /api/podcasts and connects the audio enclosure URL directly to the in-app player." />
+        <SectionTitle eyebrow="Podcast Player" title="Listen to ideas when reading can wait" text="People do not always have the time, focus or environment to read. Gate Podcasts turn meaningful conversations, analysis and knowledge into audio you can carry through your day. Whether you are commuting, working, walking or simply taking a break from the screen, Gate lets you stay connected to ideas without demanding your eyes. Instead of adding another stream of disposable entertainment to your routine, Gate gives your listening time something worth returning to. Real voices. Real perspectives. Real knowledge. Wherever your day takes you." />
         <div className="mt-8 rounded-[2.5rem] border border-black/10 bg-[#18140f] p-5 text-white shadow-2xl dark:border-white/10 md:p-8">
           <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
             <button onClick={() => nowPlaying && void openEpisode(nowPlaying)} className="aspect-square overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#d5a85c] to-[#31261b] text-left shadow-2xl">
