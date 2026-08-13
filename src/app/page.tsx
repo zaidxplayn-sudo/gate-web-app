@@ -787,13 +787,16 @@ export default function Home() {
           <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-center">
             <div className="max-w-2xl">
               <PlatformLogo id="Z" />
-              <h2 className="mt-5 text-4xl font-semibold tracking-tight">Z | ZAYDH Productivity &amp; Automation Web App</h2>
+              <p className="mt-5 font-serif text-2xl font-semibold leading-snug tracking-[-0.02em] text-[#9a6d35] md:text-3xl">Turn busywork into a better way of working</p>
               <p className="mt-4 text-base leading-8 text-zinc-600 dark:text-zinc-300 md:text-lg">Work is becoming increasingly digital, but digital does not always mean productive. Z is built to help people simplify repetitive work, organise their workflow and spend less time managing tasks that technology can handle better.</p>
               <p className="mt-4 text-base leading-8 text-zinc-600 dark:text-zinc-300 md:text-lg">While Gate is your destination for knowledge, Z is the practical layer for turning that knowledge into a more organised, efficient digital workday. Explore the Z Web App, discover its productivity and automation capabilities, and listen to the Z podcast for ideas on working smarter, building better systems and navigating the changing world of technology.</p>
-              <p className="mt-6 font-serif text-2xl font-semibold tracking-[-0.02em] text-[#9a6d35]">Learn what matters with Gate. Build a better workflow with Z.</p>
+              <p className="mt-6 font-serif text-xl font-semibold tracking-[-0.02em] text-zinc-950 dark:text-white">Learn what matters with Gate. Build a better workflow with Z.</p>
               <p className="mt-4 text-sm font-medium text-zinc-500 dark:text-zinc-400">Z remains completely independent from Gate's membership, navigation and content ecosystem.</p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <a href="https://www.zaydh.com" target="_blank" rel="noopener noreferrer" className="rounded-full bg-zinc-950 px-7 py-4 text-center font-bold text-white shadow-xl transition hover:opacity-90 dark:bg-white dark:text-black">Open Z Web App</a>
+                <a href="https://open.spotify.com/show/5rF294PWY9uvktx4JD4BTv" target="_blank" rel="noopener noreferrer" className="rounded-full border border-black/15 bg-white/60 px-7 py-4 text-center font-bold transition hover:bg-black hover:text-white dark:border-white/15 dark:bg-white/10 dark:hover:bg-white dark:hover:text-black">Listen to Z Podcast</a>
+              </div>
             </div>
-            <a href="https://www.zaydh.com" target="_blank" rel="noopener noreferrer" className="rounded-full bg-zinc-950 px-7 py-4 text-center font-bold text-white dark:bg-white dark:text-black">Open Z Web App</a>
           </div>
         </div>
       </section>
