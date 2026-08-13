@@ -231,7 +231,7 @@ function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <div className="gate-logo-wrapper cursor-pointer select-none" aria-label=".Gate">
       <span className="gate-dot heartbeat" />
-      <span className={`${compact ? "text-3xl sm:text-4xl" : "text-6xl sm:text-7xl"} gate-wordmark gate-reveal`}>
+      <span className={`${compact ? "text-4xl sm:text-5xl lg:text-[3.25rem]" : "text-6xl sm:text-7xl"} gate-wordmark gate-reveal`}>
         Gate
       </span>
     </div>

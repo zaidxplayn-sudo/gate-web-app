@@ -144,9 +144,11 @@ body {
 .gate-logo-wrapper {
   display: inline-flex;
   align-items: center;
-  gap: 0.35em;
+  justify-content: center;
+  gap: 0.4em;
   position: relative;
   vertical-align: middle;
+  line-height: 1;
 }
 
 /* Prominent Focus Circle (Dot) - Scaled to 1.55em to match diameter of lowercase 'a' font size */
@@ -159,7 +161,7 @@ body {
   flex-shrink: 0;
   transform-origin: center;
   align-self: center;
-  margin-top: -0.02em; /* Aligns precisely with vertical middle center of letter G */
+  margin-top: 0.04em; /* Fine-tuned so the dot's exact center sits on the visual center of "Gate" */
 }
 
 /* Premium Heartbeat Animation (subtle expand & contract pulse) */
