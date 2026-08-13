@@ -634,7 +634,7 @@ export default function Home() {
                 </div>
               </div>
               <h3 className="mt-5 text-2xl font-semibold">Expandable captions, tags and focused reading</h3>
-              <p className="mt-2 text-zinc-600 dark:text-zinc-300">As long-form blogs and SEO articles lose ground to AI-generated answers, Gate infographics deliver news and knowledge as clear, scrollable visuals that satisfy both readers and answer engines. The vertical feed is built for comprehension, not vanity metrics — no likes, comments, reactions or followers.</p>
+              <p className="mt-2 text-zinc-600 dark:text-zinc-300">Why are Gate Infographics useful in a world overloaded with content? Because understanding should not require hours of reading. Gate transforms news, research, data, ideas and important information into visually structured stories designed for modern attention spans. While AI is accelerating the volume of written content online, Gate focuses on the value of visual understanding: helping people discover what happened, why it matters and what they should remember in a format that is faster to absorb and easier to recall. Gate Infographics are built for busy people who want meaningful knowledge without another endless article.</p>
             </article>
             <aside className="rounded-[2rem] border border-black/10 bg-white/55 p-6 dark:border-white/10 dark:bg-white/5">
               <h3 className="text-xl font-semibold">Recommendation Signals</h3>
