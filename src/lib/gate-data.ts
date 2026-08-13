@@ -120,6 +120,7 @@ export const hubs: GateHub[] = [
       { label: "X", url: "https://www.x.com/ipngate", icon: Twitter },
       { label: "WhatsApp Community", url: "https://chat.whatsapp.com/KFy7LSrHTRN8el6mB8Nnrk", icon: MessageCircle },
       { label: "WhatsApp Channel", url: "https://whatsapp.com/channel/0029VbDCIAdL2ATxOkziUr19", icon: MessageCircle },
+      { label: "Instagram Channel", url: "https://www.instagram.com/channel/AbZu-zl3MCTKTIiV/", icon: Instagram },
     ],
     services: [
       {
@@ -322,6 +323,8 @@ export const hubs: GateHub[] = [
       { label: "Professionals Community", url: "https://teams.live.com/l/community/FEAEDqxaBj-1KkcWgI", icon: Users },
       { label: "Corporate Community", url: "https://teams.live.com/l/community/FEAhzDO4OThcgh5WwI", icon: Users },
       { label: "WhatsApp Contact", url: WHATSAPP, icon: MessageCircle },
+      { label: "Instagram Channel", url: "https://www.instagram.com/channel/Abaz9seACs8gS6-z/", icon: Instagram },
+      { label: "WhatsApp Communities", url: "https://chat.whatsapp.com/CY0VpMEu12wKUHLsXbXMup?mode=gi_t", icon: MessageCircle },
     ],
     services: [
       {
@@ -484,6 +487,8 @@ export const hubs: GateHub[] = [
       { label: "LinkedIn", url: "https://www.linkedin.com/company/ifrgate/", icon: Linkedin },
       { label: "X", url: "https://x.com/ifrgate", icon: Twitter },
       { label: "Microsoft Teams", url: "https://teams.live.com/l/community/FEAbFbMvQrnZwzE4QI?v=g1", icon: Users },
+      { label: "Author Books", url: "https://play.google.com/store/books/collection/cluster?gsr=SheCARQKEAoMd291Z0R3QUFRQkFKEAkQBA%3D%3D:S:ANO1ljIwl7Q&hl=en_CA&gl=US", icon: BookOpen },
+      { label: "Research Projects", url: "https://play.google.com/store/books/collection/cluster?gsr=SheCARQKEAoMaVNPcUVBQUFRQkFKEAkQBA%3D%3D:S:ANO1ljKca7c", icon: BookOpen },
       { label: "WhatsApp Contact", url: WHATSAPP, icon: MessageCircle },
     ],
     services: [
@@ -637,6 +642,9 @@ export const hubs: GateHub[] = [
       { label: "LinkedIn", url: "https://www.linkedin.com/company/isrgate/", icon: Linkedin },
       { label: "X", url: "https://x.com/isrgate", icon: Twitter },
       { label: "Microsoft Teams", url: "https://teams.live.com/l/community/FEACV71antVJvm6NQI?v=g1", icon: Users },
+      { label: "Instagram Channel", url: "https://www.instagram.com/channel/AbYBcVTw5e21oSOR/", icon: Instagram },
+      { label: "WhatsApp Community", url: "https://chat.whatsapp.com/K8bshhtQN3RBgLNnFuLcm5", icon: MessageCircle },
+      { label: "WhatsApp Channel", url: "https://whatsapp.com/channel/0029VakmdqmKgsO13rdmHl28", icon: MessageCircle },
       { label: "WhatsApp Contact", url: WHATSAPP, icon: MessageCircle },
     ],
     services: [
@@ -752,3 +760,24 @@ export const hubByKey = (key: HubKey): GateHub => hubs.find((h) => h.key === key
 export const hubBySlug = (slug: string): GateHub | undefined => hubs.find((h) => h.slug === slug);
 export const serviceBySlug = (hub: GateHub, slug: string): GateService | undefined =>
   hub.services.find((s) => s.slug === slug);
+
+// Z | ZAYDH Productivity & Automation — promotional social links (standalone, independent of Gate)
+export const zSocials: SocialLink[] = [
+  { label: "Website", url: "https://www.zaydh.com", icon: Globe },
+  { label: "Twitter", url: "https://x.com/zaydhcorp", icon: Twitter },
+  { label: "Instagram", url: "https://www.instagram.com/zaydhcorp/", icon: Instagram },
+  { label: "Facebook", url: "https://www.facebook.com/zaydhcorp/", icon: Facebook },
+  { label: "LinkedIn", url: "https://www.linkedin.com/company/zaydhcorp/", icon: Linkedin },
+  { label: "Spotify", url: "https://open.spotify.com/show/4VbEv3uStwjtli1ssG0utE", icon: Music2 },
+  { label: "Apple Podcasts", url: "https://podcasts.apple.com/in/podcast/z/id1871795283", icon: Podcast },
+  { label: "YouTube", url: "https://www.youtube.com/channel/UCKIamNmNGIBH2C6SnidBamQ", icon: Youtube },
+];
+
+// Unified Gate social presence used in global header/footer
+export const gateSocials: SocialLink[] = [
+  { label: "Facebook", url: "https://www.facebook.com/drzgate/", icon: Facebook },
+  { label: "Instagram", url: "https://www.instagram.com/drzgate/", icon: Instagram },
+  { label: "LinkedIn", url: "https://www.linkedin.com/company/drz-gate/", icon: Linkedin },
+  { label: "X", url: "https://x.com/drzgate", icon: Twitter },
+];
+

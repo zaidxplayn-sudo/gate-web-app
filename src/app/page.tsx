@@ -44,7 +44,8 @@ import AdminCMSModal from "@/components/AdminCMSModal";
 import PodcastTranscriptModal, { TranscriptSegment } from "@/components/PodcastTranscriptModal";
 import UserProfileAnalyticsModal from "@/components/UserProfileAnalyticsModal";
 import ServiceLandingModal from "@/components/ServiceLandingModal";
-import { hubs, hubByKey } from "@/lib/gate-data";
+import { hubs, hubByKey, gateSocials, zSocials } from "@/lib/gate-data";
+import SocialLinks from "@/components/SocialLinks";
 
 type PlatformKey = "IPN" | "IGC" | "IFR" | "ISR";
 
@@ -459,6 +460,7 @@ export default function Home() {
             {nav.map((item) => <a className="rounded-full px-4 py-2 text-zinc-700 transition hover:bg-black hover:text-white dark:text-zinc-200 dark:hover:bg-white dark:hover:text-black" href={`#${item.toLowerCase().replaceAll(" ", "-")}`} key={item}>{item}</a>)}
           </nav>
           <div className="flex items-center gap-2">
+            <SocialLinks links={gateSocials} className="hidden lg:flex" />
             <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="rounded-full border border-black/10 bg-white/70 p-3 dark:border-white/10 dark:bg-white/10" aria-label="Toggle theme">{theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}</button>
             {signedIn ? (
               <div className="flex items-center gap-2">
@@ -507,6 +509,7 @@ export default function Home() {
             <button onClick={() => openAuth("sign-up")} className="rounded-full bg-zinc-950 px-6 py-4 text-sm font-bold text-white shadow-xl shadow-black/10 dark:bg-white dark:text-black">Become a Member</button>
             <a className="rounded-full border border-black/15 bg-white/60 px-6 py-4 text-sm font-bold dark:border-white/15 dark:bg-white/10" href="#gate-feed">Explore Gate Feed</a>
           </div>
+          <SocialLinks links={gateSocials} className="mt-6" />
         </div>
         <div className="rounded-[2.5rem] border border-black/10 bg-white/55 p-4 shadow-2xl shadow-black/10 backdrop-blur dark:border-white/10 dark:bg-white/5">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -528,6 +531,7 @@ export default function Home() {
             <div>
               <PlatformLogo id={active} />
               <h2 className="mt-4 text-3xl font-semibold tracking-tight">{platforms[active].name}</h2>
+              <SocialLinks links={hubByKey(active).socials} className="mt-4" />
               <div className="mt-5 flex flex-wrap gap-2">{contentTypes.map((type) => <button onClick={() => setSelectedType(type)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${selectedType === type ? "border-zinc-950 bg-zinc-950 text-white dark:border-white dark:bg-white dark:text-black" : "border-black/10 bg-white/55 dark:border-white/10 dark:bg-black/20"}`} key={type}>{type}</button>)}</div>
             </div>
             <div className="max-w-2xl">
@@ -820,8 +824,9 @@ export default function Home() {
               <p className="mt-4 text-sm font-medium text-zinc-500 dark:text-zinc-400">Z remains completely independent from Gate's membership, navigation and content ecosystem.</p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <a href="https://www.zaydh.com" target="_blank" rel="noopener noreferrer" className="rounded-full bg-zinc-950 px-7 py-4 text-center font-bold text-white shadow-xl transition hover:opacity-90 dark:bg-white dark:text-black">Open Z Web App</a>
-                <a href="https://open.spotify.com/show/5rF294PWY9uvktx4JD4BTv" target="_blank" rel="noopener noreferrer" className="rounded-full border border-black/15 bg-white/60 px-7 py-4 text-center font-bold transition hover:bg-black hover:text-white dark:border-white/15 dark:bg-white/10 dark:hover:bg-white dark:hover:text-black">Listen to Z Podcast</a>
+                <a href="https://open.spotify.com/show/4VbEv3uStwjtli1ssG0utE" target="_blank" rel="noopener noreferrer" className="rounded-full border border-black/15 bg-white/60 px-7 py-4 text-center font-bold transition hover:bg-black hover:text-white dark:border-white/15 dark:bg-white/10 dark:hover:bg-white dark:hover:text-black">Listen to Z Podcast</a>
               </div>
+              <SocialLinks links={zSocials} className="mt-6" />
             </div>
           </div>
         </div>
@@ -860,6 +865,9 @@ export default function Home() {
                     <p className="text-sm uppercase tracking-[0.22em] text-white/45">Creator Profile</p>
                     <h4 className="mt-2 text-xl font-semibold">{nowPlaying.creator || nowPlaying.podcastTitle || nowPlaying.platform}</h4>
                     <p className="mt-1 text-sm text-white/60">{nowPlaying.platform} podcast feed synced from RSS.</p>
+                    {(["IPN", "IGC", "IFR", "ISR"] as const).includes(nowPlaying.platform as "IPN") && (
+                      <SocialLinks links={hubByKey(nowPlaying.platform as "IPN").socials} className="mt-4" />
+                    )}
                   </div>
                 </div>
                 <div>
@@ -950,7 +958,7 @@ export default function Home() {
         <AdminCMSModal onClose={() => setAdminCmsOpen(false)} />
       )}
 
-      <footer className="border-t border-black/10 px-4 py-10 dark:border-white/10"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-4 md:flex-row"><Logo compact /><p className="text-sm text-zinc-500">Facebook · Instagram · LinkedIn · X · Gate. Learn. Discover. Grow.</p></div></footer>
+      <footer className="border-t border-black/10 px-4 py-10 dark:border-white/10"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 md:flex-row md:items-center"><div className="flex flex-col gap-3"><Logo compact /><p className="text-sm text-zinc-500">Gate. Learn. Discover. Grow.</p></div><SocialLinks links={gateSocials} /></div></footer>
       {showWelcome && <div className="fixed right-4 top-24 z-[70] flex items-center gap-3 rounded-3xl border border-black/10 bg-white/95 p-4 shadow-2xl shadow-black/15 animate-in fade-in slide-in-from-top-3 dark:border-white/10 dark:bg-zinc-950/95"><Logo compact /><span className="font-semibold">Greetings, {userName} {userRole === "admin" ? "(Admin)" : ""}</span></div>}
       {authOpen && <AuthDialog mode={authMode} setMode={setAuthMode} onClose={() => setAuthOpen(false)} onSubmit={submitAuth} />}
     </main>

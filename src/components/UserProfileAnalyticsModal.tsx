@@ -23,6 +23,8 @@ import {
   Tag,
   Award,
 } from "lucide-react";
+import { gateSocials } from "@/lib/gate-data";
+import SocialLinks from "@/components/SocialLinks";
 
 export default function UserProfileAnalyticsModal({
   userName = "Zayd Haji",
@@ -256,6 +258,10 @@ export default function UserProfileAnalyticsModal({
               >
                 <Edit3 size={16} /> Save Profile Changes
               </button>
+            </div>
+            <div className="mt-6 pt-5 border-t border-black/10 dark:border-white/10">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Connect with Gate</h4>
+              <SocialLinks links={gateSocials} className="mt-3" />
             </div>
           </form>
         )}

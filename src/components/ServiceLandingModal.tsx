@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import type { GateHub, GateService } from "@/lib/gate-data";
+import SocialLinks from "@/components/SocialLinks";
 
 export default function ServiceLandingModal({
   service,
@@ -141,6 +142,12 @@ export default function ServiceLandingModal({
                 </details>
               ))}
             </div>
+          </section>
+
+          {/* Connect with hub */}
+          <section className="mt-6 rounded-[2rem] border border-white/10 bg-white/5 p-6 md:p-9">
+            <h2 className="text-xl font-semibold">Connect with {hub.name}</h2>
+            <SocialLinks links={hub.socials} className="mt-4" />
           </section>
 
           {/* Final CTA */}

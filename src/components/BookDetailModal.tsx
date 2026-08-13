@@ -11,6 +11,8 @@ import {
   Check,
   Star,
 } from "lucide-react";
+import { hubByKey } from "@/lib/gate-data";
+import SocialLinks from "@/components/SocialLinks";
 
 export type BookPurchaseLinks = {
   paperbackEnabled?: boolean;
@@ -246,6 +248,14 @@ export default function BookDetailModal({
                 </div>
               </div>
             )}
+
+            {/* Connect with hub socials */}
+            <div className="mt-6 pt-4 border-t border-black/10 dark:border-white/10">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
+                Connect with {item.platform}
+              </h4>
+              <SocialLinks links={hubByKey(item.platform).socials} />
+            </div>
           </div>
         </div>
       </div>
