@@ -623,7 +623,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="membership" className="mx-auto max-w-7xl px-4 py-14">
+      <section id="membership" className="mx-auto max-w-7xl px-4 py-14 space-y-12">
+        {/* Lifetime Membership One Time Launch Offer Section */}
         <div className="overflow-hidden rounded-[3rem] border border-black/10 bg-[#15110c] text-white shadow-2xl shadow-black/20 dark:border-white/10">
           <div className="grid gap-0 lg:grid-cols-[1.05fr_.95fr]">
             <div className="relative p-8 md:p-12">
@@ -634,26 +635,26 @@ export default function Home() {
                   <span className="rounded-full bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-black">Lifetime Access</span>
                 </div>
                 <h2 className="mt-8 max-w-3xl font-serif text-5xl font-semibold leading-[0.95] tracking-[-0.05em] md:text-7xl">Pay Once. Learn for a Lifetime.</h2>
-                <p className="mt-6 max-w-2xl text-lg leading-8 text-white/75">A founder-led .Gate lifetime membership launch offer by Zayd Haji, Founder of .Gate, created for people who want their daily screen time to compound into knowledge instead of disappearing into noise.</p>
+                <p className="mt-6 max-w-2xl text-lg leading-8 text-white/75">A founder-led .Gate lifetime membership launch offer curated by Zayd Haji, Founder of .Gate, created for individuals who want their daily screen time to compound into knowledge instead of disappearing into digital noise.</p>
 
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">
                   <div className="rounded-[2rem] border border-white/10 bg-white/10 p-5 backdrop-blur">
-                    <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f4d39b]">One Payment</p>
+                    <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f4d39b]">One-Time Investment</p>
                     <p className="mt-3 text-5xl font-black tracking-tight">₹9,999</p>
-                    <p className="mt-2 text-sm text-white/60 line-through">Recurring multi-year subscriptions</p>
+                    <p className="mt-2 text-sm text-white/60 line-through">Standard recurring multi-year renewals</p>
                   </div>
                   <div className="rounded-[2rem] border border-white/10 bg-white/10 p-5 backdrop-blur">
-                    <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f4d39b]">First Year Equivalent</p>
-                    <p className="mt-3 text-2xl font-black">₹27.39/day</p>
-                    <p className="mt-1 text-2xl font-black">₹833.25/month</p>
-                    <p className="mt-2 text-sm text-white/60">Effective cost keeps falling the longer you stay.</p>
+                    <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#f4d39b]">First Year Breakdown</p>
+                    <p className="mt-3 text-2xl font-black">₹27.39 / day</p>
+                    <p className="mt-1 text-2xl font-black">₹833.25 / month</p>
+                    <p className="mt-2 text-sm text-white/60">Effective cost approaches zero the longer you stay.</p>
                   </div>
                 </div>
 
                 <p className="mt-8 rounded-[2rem] border border-[#d5a85c]/30 bg-[#d5a85c]/10 p-5 font-serif text-2xl leading-snug text-[#ffe3af]">Your daily screen time already has a cost; make some of that time compound into knowledge.</p>
 
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <button className="rounded-full bg-white px-7 py-4 text-sm font-black text-black shadow-xl transition hover:scale-[1.02]">Claim Lifetime Membership — ₹9,999</button>
+                  <button className="rounded-full bg-white px-7 py-4 text-sm font-black text-black shadow-xl transition hover:scale-[1.02]">Claim Lifetime Membership | ₹9,999</button>
                   <a href="#gate-feed" className="rounded-full border border-white/25 bg-white/10 px-7 py-4 text-sm font-black text-white backdrop-blur transition hover:bg-white/20">Explore What’s Inside Gate</a>
                 </div>
                 <p className="mt-4 flex items-center gap-2 text-sm text-white/55"><ShieldCheck size={16} /> Secure one-time payment. No recurring billing for this lifetime launch membership.</p>
@@ -661,7 +662,7 @@ export default function Home() {
             </div>
 
             <div className="border-t border-white/10 bg-white/[0.06] p-8 md:p-12 lg:border-l lg:border-t-0">
-              <h3 className="text-2xl font-semibold tracking-tight">Lifetime access includes</h3>
+              <h3 className="text-2xl font-semibold tracking-tight">Lifetime membership includes</h3>
               <div className="mt-6 grid gap-3">
                 {["IPN | International Public Network", "IGC | Inspire Guide Connect", "IFR | Integrity Finance Research", "ISR | Ideological Studies Research"].map((item) => (
                   <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/20 p-4" key={item}>
@@ -672,7 +673,7 @@ export default function Home() {
               </div>
 
               <div className="mt-6 rounded-[2rem] border border-white/10 bg-black/20 p-5">
-                <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#f4d39b]">Value Stack</p>
+                <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#f4d39b]">Value Stack & Resources</p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   {["Books", "Podcasts", "Infographics", "Research Reports", "Eligible premium learning resources", "Member downloads", "Progress tracking", "Knowledge discovery feed"].map((item) => (
                     <div className="flex items-center gap-2 text-sm text-white/80" key={item}><Check size={16} className="text-[#d5a85c]" /> {item}</div>
@@ -681,10 +682,34 @@ export default function Home() {
               </div>
 
               <div className="mt-6 rounded-[2rem] bg-white p-5 text-black">
-                <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#9a6d35]">Founder Led Trust</p>
-                <p className="mt-3 text-sm leading-7 text-zinc-700">Built around the vision of Zayd Haji, .Gate is positioned as a long-term knowledge ecosystem, not a short-term content subscription. One considered payment unlocks access across the four Gate knowledge platforms for life.</p>
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#9a6d35]">Founder Led Credibility</p>
+                <p className="mt-3 text-sm leading-7 text-zinc-700">Created by Zayd Haji, Founder of .Gate, this launch offer is designed as a rare long-term investment in intellectual growth across the four pillars of the Gate ecosystem.</p>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Standard Gate Membership Pricing Options */}
+        <div>
+          <SectionTitle eyebrow="Gate Membership Pricing" title="Standard recurring subscription plans" text="Choose a duration that matches your commitment. All plans unlock identical premium benefits across IPN, IGC, IFR and ISR." />
+          <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {[
+              ["Monthly", "₹99", "Flexible", "Just ₹3.30/day. Maximum flexibility with full premium access and the freedom to cancel anytime."],
+              ["1 Year", "₹799", "Popular", "Only ₹66.58/month or ₹2.19/day. Save over 32%. Recommended choice for regular learners."],
+              ["3 Years", "₹2,199", "Value", "Just ₹61.08/month or ₹2.01/day. Greater long-term value with uninterrupted access."],
+              ["5 Years", "₹3,499", "Savings", "Only ₹58.32/month or ₹1.92/day. Lock in lower pricing with substantial savings."],
+              ["7 Years", "₹4,699", "Commitment", "Just ₹55.94/month or ₹1.84/day. Continuous access at one of the lowest effective costs."],
+              ["9 Years", "₹5,799", "Legacy", "Only ₹53.69/month or ₹1.77/day. Maximum savings for lifelong learners and supporters."],
+            ].map(([name, price, label, detail]) => (
+              <div key={name} className={`rounded-[2rem] border p-6 flex flex-col justify-between ${name === "1 Year" ? "border-zinc-950 bg-zinc-950 text-white shadow-2xl shadow-black/20 dark:border-white" : "border-black/10 bg-white/65 dark:border-white/10 dark:bg-white/5"}`}>
+                <div>
+                  <div className="flex items-center justify-between"><h3 className="text-2xl font-semibold">{name}</h3><span className={`rounded-full px-3 py-1 text-sm font-bold ${name === "1 Year" ? "bg-white text-black" : "bg-black/10 dark:bg-white/15"}`}>{label}</span></div>
+                  <p className="mt-6 text-4xl font-bold">{price}</p>
+                  <p className="mt-3 text-sm opacity-80 leading-6">{detail}</p>
+                </div>
+                <button className={`mt-8 w-full rounded-full px-5 py-3.5 font-bold transition ${name === "1 Year" ? "bg-white text-black hover:bg-zinc-200" : "bg-zinc-950 text-white dark:bg-white dark:text-black hover:opacity-90"}`}>Choose {name}</button>
+              </div>
+            ))}
           </div>
         </div>
       </section>
