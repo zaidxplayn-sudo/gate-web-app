@@ -114,7 +114,7 @@ export const hubs: GateHub[] = [
       { label: "YouTube", url: "https://www.youtube.com/channel/UCmOSNgWPPQqYEaeGcdXBURA", icon: Youtube },
       { label: "Spotify", url: "https://open.spotify.com/show/033VCxjOKlNfHBM1wceTwZ?si=b7f6592b89f8447e", icon: Music2 },
       { label: "Apple Podcasts", url: "https://podcasts.apple.com/us/podcast/ipn-|-internattional-public-network/id6794651434", icon: Podcast },
-      { label: "Instagram", url: "https://www.instagram.com/ipg.gate", icon: Instagram },
+      { label: "Instagram", url: "https://www.instagram.com/ipn.gate", icon: Instagram },
       { label: "Facebook", url: "https://www.facebook.com/ipn.gate/", icon: Facebook },
       { label: "LinkedIn", url: "https://www.linkedin.com/company/ipngate/", icon: Linkedin },
       { label: "X", url: "https://www.x.com/ipngate", icon: Twitter },
