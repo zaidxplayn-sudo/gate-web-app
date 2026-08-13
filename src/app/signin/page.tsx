@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import AuthScreen from "@/components/auth/AuthScreen";
@@ -10,10 +10,32 @@ import { Loader2 } from "lucide-react";
 
 export default function SignInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      const errorMap: Record<string, string> = {
+        Configuration:
+          "OAuth configuration error. Please ensure provider credentials are correctly set in your .env file.",
+        OAuthSignin:
+          "OAuth sign-in failed. Please check your provider credentials.",
+        OAuthCallback:
+          "OAuth callback error. The provider returned an error.",
+        OAuthAccountNotLinked:
+          "This email is already associated with another sign-in method.",
+        default:
+          "Authentication error. Please try again.",
+      };
+      setError(
+        errorMap[errorParam] || errorParam
+      );
+    }
+  }, [searchParams]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +69,11 @@ export default function SignInPage() {
       }
     >
       <OAuthButtons />
+      {error && (
+        <div className="mt-3 flex items-center gap-2 rounded-2xl bg-amber-500/10 px-4 py-3 text-xs font-semibold text-amber-600 dark:text-amber-500">
+          <span>{error}</span>
+        </div>
+      )}
       <div className="my-5 flex items-center gap-3 text-xs text-zinc-400">
         <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
         OR
@@ -69,7 +96,6 @@ export default function SignInPage() {
           onChange={(e) => setPassword(e.target.value)}
           className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-sm outline-none focus:border-[#9a6d35] dark:border-white/10 dark:bg-black/30"
         />
-        {error && <p className="text-sm font-medium text-red-600">{error}</p>}
         <button
           type="submit"
           disabled={loading}

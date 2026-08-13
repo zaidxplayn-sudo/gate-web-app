@@ -1,38 +1,50 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Loader2, AlertCircle } from "lucide-react";
 
 export function OAuthButtons() {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [config, setConfig] = useState<{ google: boolean; apple: boolean } | null>(null);
-
-  useEffect(() => {
-    fetch("/api/auth/config")
-      .then((res) => res.json())
-      .then(setConfig)
-      .catch(() => {});
-  }, []);
 
   const handle = async (provider: "google" | "apple") => {
     setError(null);
-    if (config && !config[provider]) {
-      setError(
-        `${provider === "google" ? "Google" : "Apple"} Sign-In is not configured in this environment. Please set ${
-          provider === "google"
-            ? "GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET"
-            : "APPLE_CLIENT_ID, APPLE_TEAM_ID, APPLE_KEY_ID, and APPLE_PRIVATE_KEY"
-        } in your .env file.`
-      );
-      return;
-    }
     setLoading(provider);
     try {
-      await signIn(provider, { callbackUrl: "/account" });
+      const res = await signIn(provider, {
+        redirect: false,
+        callbackUrl: "/account",
+      });
+
+      if (res?.error) {
+        const errorMap: Record<string, string> = {
+          Configuration:
+            "OAuth configuration error. Please ensure Google/Apple credentials are correctly set in your .env file.",
+          OAuthSignin:
+            "OAuth sign-in failed. Please ensure the provider credentials are correct.",
+          OAuthCallback:
+            "OAuth callback error. The provider returned an error during sign-in.",
+          OAuthAccountNotLinked:
+            "This email is already associated with another sign-in method.",
+          default:
+            "Unable to sign in with this provider. Please try again or use email/password.",
+        };
+        const message =
+          errorMap[res.error] ||
+          errorMap[(res as any).error] ||
+          errorMap.default;
+        setError(message);
+      } else if (res?.ok || res?.url) {
+        window.location.href = res.url || "/account";
+      }
     } catch (err) {
-      setError("An error occurred during sign in. Please try again.");
+      setError(
+        err instanceof Error && err.message.includes("popup")
+          ? "Sign-in was cancelled. Please try again."
+          : "An error occurred during sign in. Please try again."
+      );
+    } finally {
       setLoading(null);
     }
   };
