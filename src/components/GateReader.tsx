@@ -66,7 +66,7 @@ const DEFAULT_SAMPLE_BOOK: BookSampleData = {
       title: "Chapter 4: Theological Insights & Contemporary Discourse",
       content: [
         "Ideological Studies Research (ISR) explores the foundational texts, classical jurisprudence, and contemporary theological discussions shaping global perspectives.",
-        "A rigorous analytical approach to classical sources—including Quranic commentary and Hadith methodology—enables scholars and research practitioners to address modern socio-ethical questions with clarity and authenticity.",
+        "A rigorous analytical approach to classical sources | including Quranic commentary and Hadith methodology | enables scholars and research practitioners to address modern socio-ethical questions with clarity and authenticity.",
         "By examining theology in dialogue with science, ethics, and relationships, ISR fosters balanced intellectual inquiry grounded in scholarly traditional rigor."
       ]
     }

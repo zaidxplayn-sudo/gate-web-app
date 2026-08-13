@@ -218,7 +218,7 @@ export const hubs: GateHub[] = [
         audience: ["Supporters", "Researchers", "Professionals", "Students", "Organisations"],
         benefits: ["Access to IPN books, podcasts, infographics and reports", "Early access to research", "Member updates and briefings", "Community participation", "Support for independent journalism"],
         process: ["Choose Plan", "Subscribe", "Access Unlocked", "Enjoy Member Benefits"],
-        pricing: "Recurring membership — see Gate Membership pricing",
+        pricing: "Recurring membership | see Gate Membership pricing",
         faqs: [
           { question: "What does an IPN membership include?", answer: "Membership unlocks premium IPN content and member benefits. All membership tiers are managed through the single Gate membership system." },
           ...defaultFaqs("memberships").slice(1),
@@ -420,7 +420,7 @@ export const hubs: GateHub[] = [
         audience: ["Students", "Professionals", "Leaders", "Lifelong learners"],
         benefits: ["Access to IGC books, podcasts, infographics and reports", "Workshop access", "Member community", "Learning progress tracking", "Support for accessible growth resources"],
         process: ["Choose Plan", "Subscribe", "Access Unlocked", "Enjoy Member Benefits"],
-        pricing: "Recurring membership — see Gate Membership pricing",
+        pricing: "Recurring membership | see Gate Membership pricing",
         faqs: [
           { question: "What does an IGC membership include?", answer: "Membership unlocks premium IGC content and member benefits through the single Gate membership system." },
           ...defaultFaqs("memberships").slice(1),
@@ -541,7 +541,7 @@ export const hubs: GateHub[] = [
         audience: ["Finance professionals", "Researchers", "Students", "Institutions"],
         benefits: ["Access to IFR books, reports, podcasts and infographics", "Literacy workshop access", "Member briefings", "Learning progress tracking", "Support for independent research"],
         process: ["Choose Plan", "Subscribe", "Access Unlocked", "Enjoy Member Benefits"],
-        pricing: "Recurring membership — see Gate Membership pricing",
+        pricing: "Recurring membership | see Gate Membership pricing",
         faqs: [
           { question: "What does an IFR membership include?", answer: "Membership unlocks premium IFR content and member benefits through the single Gate membership system." },
           ...defaultFaqs("memberships").slice(1),
@@ -694,7 +694,7 @@ export const hubs: GateHub[] = [
         audience: ["Students", "Researchers", "Educators", "Institutions"],
         benefits: ["Access to ISR books, reports, podcasts and infographics", "Workshop access", "Research updates", "Learning progress tracking", "Support for serious scholarship"],
         process: ["Choose Plan", "Subscribe", "Access Unlocked", "Enjoy Member Benefits"],
-        pricing: "Recurring membership — see Gate Membership pricing",
+        pricing: "Recurring membership | see Gate Membership pricing",
         faqs: [
           { question: "What does an ISR membership include?", answer: "Membership unlocks premium ISR content and member benefits through the single Gate membership system." },
           ...defaultFaqs("memberships").slice(1),

@@ -587,7 +587,7 @@ export default function Home() {
         <div className="max-w-3xl">
           <p className="text-sm font-bold uppercase tracking-[0.25em] text-[#9a6d35]">Post Login Experience</p>
           <h2 className="mt-3 font-serif text-4xl font-semibold leading-[0.95] tracking-[-0.04em] md:text-6xl">Turn your screen time into a daily stream of useful knowledge</h2>
-          <p className="mt-5 text-lg leading-8 text-zinc-700 dark:text-zinc-300">Once you sign in, Gate becomes more than a library. It becomes a personalised starting point for discovering ideas worth your attention. Your four knowledge hubs — IPN, IGC, IFR and ISR — remain within reach, while the Gate Feed brings relevant books, research reports, podcasts and infographics into one continuous discovery experience.</p>
+          <p className="mt-5 text-lg leading-8 text-zinc-700 dark:text-zinc-300">Once you sign in, Gate becomes more than a library. It becomes a personalised starting point for discovering ideas worth your attention. Your four knowledge hubs | IPN, IGC, IFR and ISR | remain within reach, while the Gate Feed brings relevant books, research reports, podcasts and infographics into one continuous discovery experience.</p>
           <p className="mt-4 text-lg leading-8 text-zinc-700 dark:text-zinc-300">Instead of opening your phone and falling into another cycle of random scrolling, you can return to a feed shaped around learning, curiosity and the subjects you choose to explore.</p>
           <p className="mt-6 font-serif text-2xl font-semibold tracking-[-0.02em] text-[#9a6d35]">Open Gate. Find something worth knowing. Let your next scroll teach you something.</p>
           <div className="mt-7 flex flex-wrap gap-3">
