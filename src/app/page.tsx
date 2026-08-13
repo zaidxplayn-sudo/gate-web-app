@@ -753,7 +753,23 @@ export default function Home() {
       </section>
 
       <section id="dashboard" className="mx-auto max-w-7xl px-4 py-14">
-        <SectionTitle eyebrow="User Account" title="Dashboard, progress, profile and premium access states" text="Guests see previews and premium overlays; logged-in users manage accounts; active members unlock everything; expired members retain metadata while access locks." />
+        <div className="max-w-3xl">
+          <p className="text-sm font-bold uppercase tracking-[0.25em] text-[#9a6d35]">User Account</p>
+          <h2 className="mt-3 font-serif text-4xl font-semibold leading-[0.95] tracking-[-0.04em] md:text-6xl">Your knowledge journey, remembered in one place</h2>
+          <p className="mt-5 text-lg leading-8 text-zinc-700 dark:text-zinc-300">What makes a Gate account valuable is not simply access. It is continuity. Your account remembers where your curiosity has taken you, what you have explored and where you left off, so knowledge does not disappear the moment you close the app.</p>
+          <p className="mt-4 text-lg leading-8 text-zinc-700 dark:text-zinc-300">From discovering your first infographic to returning to an unfinished book, podcast or research report, Gate turns scattered consumption into a personal knowledge journey.</p>
+          <p className="mt-4 text-lg leading-8 text-zinc-700 dark:text-zinc-300">What can you do with a Gate account? Discover relevant knowledge, continue where you stopped, save what matters, understand your progress and manage your premium access from one place.</p>
+          <p className="mt-4 text-lg leading-8 text-zinc-700 dark:text-zinc-300">Whether you are exploring Gate as a guest, building a regular learning habit or using an active membership, your journey stays connected to you.</p>
+          <p className="mt-6 font-serif text-2xl font-semibold tracking-[-0.02em] text-[#9a6d35]">Don't just consume content. Build a record of what you know.</p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            {signedIn ? (
+              <button onClick={() => setUserProfileModalOpen(true)} className="rounded-full bg-zinc-950 px-7 py-4 text-center font-bold text-white shadow-xl transition hover:opacity-90 dark:bg-white dark:text-black">View My Profile</button>
+            ) : (
+              <button onClick={() => openAuth("sign-in")} className="rounded-full bg-zinc-950 px-7 py-4 text-center font-bold text-white shadow-xl transition hover:opacity-90 dark:bg-white dark:text-black">Sign In</button>
+            )}
+            <button onClick={() => setUserProfileModalOpen(true)} className="rounded-full border border-black/15 bg-white/60 px-7 py-4 text-center font-bold transition hover:bg-black hover:text-white dark:border-white/15 dark:bg-white/10 dark:hover:bg-white dark:hover:text-black">Open Profile & Analytics</button>
+          </div>
+        </div>
         <div className="mt-8 grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
           <div className="rounded-[2rem] border border-black/10 bg-white/65 p-6 dark:border-white/10 dark:bg-white/5">
             <div className="flex items-center gap-4"><div className="grid size-16 place-items-center rounded-full bg-zinc-950 text-white"><User /></div><div><h3 className="text-2xl font-semibold">Greetings, {signedIn ? userName : "Guest"}</h3><p className="text-sm text-zinc-500">{signedIn ? (userRole === "admin" ? "Gate System Administrator" : "Active Gate Member") : "Sign in to activate your dashboard"}</p></div></div>
