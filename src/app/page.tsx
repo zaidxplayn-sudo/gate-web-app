@@ -584,7 +584,17 @@ export default function Home() {
       </section>
 
       <section id="gate-feed" className="mx-auto max-w-7xl px-4 py-14">
-        <SectionTitle eyebrow="Post Login Experience" title="Algorithm-based Gate Feed" text="After login, the home experience shows the four platform hubs, the standalone Z promotion and a personalised feed ordered as books, research reports, podcasts and infographics." />
+        <div className="max-w-3xl">
+          <p className="text-sm font-bold uppercase tracking-[0.25em] text-[#9a6d35]">Post Login Experience</p>
+          <h2 className="mt-3 font-serif text-4xl font-semibold leading-[0.95] tracking-[-0.04em] md:text-6xl">Turn your screen time into a daily stream of useful knowledge</h2>
+          <p className="mt-5 text-lg leading-8 text-zinc-700 dark:text-zinc-300">Once you sign in, Gate becomes more than a library. It becomes a personalised starting point for discovering ideas worth your attention. Your four knowledge hubs — IPN, IGC, IFR and ISR — remain within reach, while the Gate Feed brings relevant books, research reports, podcasts and infographics into one continuous discovery experience.</p>
+          <p className="mt-4 text-lg leading-8 text-zinc-700 dark:text-zinc-300">Instead of opening your phone and falling into another cycle of random scrolling, you can return to a feed shaped around learning, curiosity and the subjects you choose to explore.</p>
+          <p className="mt-6 font-serif text-2xl font-semibold tracking-[-0.02em] text-[#9a6d35]">Open Gate. Find something worth knowing. Let your next scroll teach you something.</p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <a href="#hub-services" className="rounded-full bg-zinc-950 px-7 py-4 text-center font-bold text-white shadow-xl transition hover:opacity-90 dark:bg-white dark:text-black">Explore the Feed</a>
+            <button onClick={() => openAuth("sign-up")} className="rounded-full border border-black/15 bg-white/60 px-7 py-4 text-center font-bold transition hover:bg-black hover:text-white dark:border-white/15 dark:bg-white/10 dark:hover:bg-white dark:hover:text-black">Become a Member</button>
+          </div>
+        </div>
         <div className="mt-8 space-y-8">
           <div className="rounded-[2rem] border border-black/10 bg-white/55 p-5 dark:border-white/10 dark:bg-white/5">
             <div className="mb-4 flex items-center justify-between"><h3 className="flex items-center gap-2 text-xl font-semibold"><BookOpen /> Books</h3><span className="text-sm text-zinc-500">Horizontal slider</span></div>
