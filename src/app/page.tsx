@@ -128,7 +128,7 @@ const sampleBooks: BookItemData[] = [
     title: "World Policy & Ethical Governance Handbook",
     subtitle: "Frameworks for Modern Public Affairs and Sustainable Progress",
     author: "Dr. Zayd Haji",
-    description: "A landmark treatise detailing unified frameworks for international diplomacy, law, public policy, and ecological responsibility across interconnected global networks.",
+    description: "A landmark treatise detailing connected frameworks for international diplomacy, law, public policy, and ecological responsibility across interconnected global networks.",
     category: "World",
     tags: ["World", "Global", "Politics"],
     freeSampleEnabled: true,
@@ -182,7 +182,7 @@ const sampleInfographics: InfographicPostData[] = [
     id: "info-1",
     platform: "IPN",
     title: "Global Public Policy & Environmental Architecture",
-    caption: "A comprehensive 4:5 visual guide breaking down international policy frameworks, ecological targets, law reform, and multi-lateral public networks across 12 strategic global sectors.\n\nKey Highlights:\n• Unified governance frameworks\n• Sustainable economic transitions\n• Environmental protection compliance\n• Multi-stakeholder diplomacy roadmaps",
+    caption: "A comprehensive 4:5 visual guide breaking down international policy frameworks, ecological targets, law reform, and multi-lateral public networks across 12 strategic global sectors.\n\nKey Highlights:\n• Connected governance frameworks\n• Sustainable economic transitions\n• Environmental protection compliance\n• Multi-stakeholder diplomacy roadmaps",
     imageUrl: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=80",
     category: "Environment & Climate",
     tags: ["World", "Climate", "Policy"],
@@ -203,16 +203,26 @@ const sampleInfographics: InfographicPostData[] = [
 ];
 
 const contentLibrary = [
-  { platform: "IPN", type: "Books", title: "World Policy Handbook", category: "World", tags: ["World", "Global", "Politics"], description: "A premium book entry connected to the World category and global public affairs tags." },
-  { platform: "IPN", type: "Books", title: "Climate, Society and Progress", category: "Environment & Climate", tags: ["World", "Climate", "Policy"], description: "Book metadata appears when users filter Books with the World tag." },
-  { platform: "IGC", type: "Books", title: "Global Productivity Playbook", category: "Productivity & Time Management", tags: ["World", "Productivity", "Leadership"], description: "Cross-platform discovery keeps the selected tag active beyond one hub." },
-  { platform: "IFR", type: "Books", title: "World Economy and Ethical Finance", category: "Global Economy", tags: ["World", "Finance", "Economy"], description: "IFR books can surface beside IPN and IGC when tags match." },
-  { platform: "ISR", type: "Books", title: "Theology in a Connected World", category: "Contemporary Theological Issues", tags: ["World", "Theology", "Society"], description: "ISR books remain discoverable through the unified Gate tag system." },
-  { platform: "IPN", type: "Research Reports", title: "World Governance Outlook", category: "Politics & Governance", tags: ["World", "Governance"], description: "Research reports stay separate unless the user selects the matching content type." },
-  { platform: "IFR", type: "Podcasts", title: "Global Markets Briefing", category: "Financial Markets", tags: ["World", "Markets"], description: "Podcast cards are indexed by platform, category and tags." },
-  { platform: "IGC", type: "Infographics", title: "World Skills Map", category: "Career Development", tags: ["World", "Career"], description: "Infographic posts use the same metadata and recommendation graph." },
+  { platform: "IPN", type: "Books", title: "World Policy Handbook", category: "World", tags: ["World", "Global", "Politics"], description: "A premium IPN book entry connected to global public affairs." },
+  { platform: "IPN", type: "Research Reports", title: "Climate, Society and Progress", category: "Environment & Climate", tags: ["Climate", "Policy", "Global"], description: "IPN research on climate policy, society and governance." },
+  { platform: "IPN", type: "Infographics", title: "World Governance Map", category: "Politics & Governance", tags: ["Governance", "United Nations", "Public Affairs"], description: "IPN visual guide for global governance systems." },
+  { platform: "IGC", type: "Books", title: "Global Productivity Playbook", category: "Productivity & Time Management", tags: ["Productivity", "Time Management", "Leadership"], description: "IGC productivity book connected to skills, work and career development." },
+  { platform: "IGC", type: "Infographics", title: "Career Growth Ladder", category: "Career Development", tags: ["Career", "Employability", "Growth Mindset"], description: "IGC career development visual guide for students and professionals." },
+  { platform: "IGC", type: "Podcasts", title: "Leadership Mindset Briefing", category: "Leadership & Growth Mindset", tags: ["Leadership", "Motivation", "Communication"], description: "IGC podcast for leadership, communication and motivation." },
+  { platform: "IFR", type: "Books", title: "World Economy and Ethical Finance", category: "Global Economy", tags: ["Finance", "Economy", "Markets"], description: "IFR book on ethical finance and the global economy." },
+  { platform: "IFR", type: "Research Reports", title: "Ethical Banking Outlook", category: "Ethical Banking", tags: ["Ethical Banking", "Shariah Governance", "Financial Literacy"], description: "IFR research report on banking governance and literacy." },
+  { platform: "IFR", type: "Podcasts", title: "Global Markets Briefing", category: "Financial Markets", tags: ["Financial Markets", "Company Research", "Public Policy"], description: "IFR podcast indexed by markets, policy and research tags." },
+  { platform: "ISR", type: "Books", title: "Theology in a Connected World", category: "Contemporary Theological Issues", tags: ["Theology", "Society", "Ethics"], description: "ISR book on theology, society and contemporary discourse." },
+  { platform: "ISR", type: "Research Reports", title: "Hadith Studies Reference Guide", category: "Hadith Studies (68,061 Hadiths)", tags: ["Hadith", "Sahih Bukhari", "Sahih Muslim"], description: "ISR research guide for Hadith studies and classical sources." },
+  { platform: "ISR", type: "Infographics", title: "Quranic Studies Pathway", category: "Quranic Studies (6,236 Verses)", tags: ["Quran", "Tafsir", "Theology"], description: "ISR infographic pathway for Quranic studies and Tafsir." },
 ] as const;
-const globalTags = ["World", "Global", "Politics", "Climate", "Productivity", "Leadership", "Finance", "Economy", "Theology", "Society", "Governance", "Markets", "Career"];
+
+const hubTags: Record<PlatformKey, string[]> = {
+  IPN: ["World", "Global", "Politics", "Governance", "Climate", "Policy", "United Nations", "Public Affairs", "Society", "Environment", "Security", "Culture"],
+  IGC: ["Career", "Employability", "Motivation", "Leadership", "Growth Mindset", "Productivity", "Time Management", "Entrepreneurship", "Communication", "Public Speaking", "Sustainability"],
+  IFR: ["Finance", "Economy", "Markets", "Ethical Banking", "Shariah Governance", "Financial Literacy", "Company Research", "Public Policy", "Industry Analysis", "Ethical Finance"],
+  ISR: ["Quran", "Tafsir", "Hadith", "Sahih Bukhari", "Sahih Muslim", "Theology", "Ethics", "Creed", "Jurisprudence", "Prophetic Biography", "Contemporary Issues"],
+};
 
 /* Enlarged Gate Logo Component with Precisely Centered Focus Circle (Dot) & Heartbeat Reveal */
 function Logo({ compact = false }: { compact?: boolean }) {
@@ -260,7 +270,7 @@ export default function Home() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [selectedType, setSelectedType] = useState("Books");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedTag, setSelectedTag] = useState("World");
+  const [selectedTag, setSelectedTag] = useState("All");
   const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
   const [playerOpen, setPlayerOpen] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -281,16 +291,23 @@ export default function Home() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const featured = useMemo(() => episodes.find((item) => item.platform === active) ?? episodes[0], [active, episodes]);
   const nowPlaying = currentEpisode ?? featured;
+  const activeHubTags = hubTags[active];
   const filteredContent = useMemo(() => contentLibrary.filter((item) => {
+    const hubMatch = item.platform === active;
     const typeMatch = selectedType === "All" || item.type === selectedType;
     const categoryMatch = selectedCategory === "All" || item.category === selectedCategory;
     const tagMatch = selectedTag === "All" || (item.tags as readonly string[]).includes(selectedTag);
-    return typeMatch && categoryMatch && tagMatch;
-  }), [selectedType, selectedCategory, selectedTag]);
+    return hubMatch && typeMatch && categoryMatch && tagMatch;
+  }), [active, selectedType, selectedCategory, selectedTag]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
+
+  useEffect(() => {
+    setSelectedCategory("All");
+    setSelectedTag("All");
+  }, [active]);
 
   useEffect(() => {
     fetch("/api/podcasts")
@@ -472,7 +489,17 @@ export default function Home() {
           <div className="mb-8 inline-flex w-fit items-center gap-2 rounded-full border border-black/10 bg-white/65 px-4 py-2 text-sm font-medium dark:border-white/10 dark:bg-white/10"><Sparkles size={16} /> Gate. Learn. Discover. Grow.</div>
           <div className="mb-6"><Logo /></div>
           <h1 className="max-w-4xl text-5xl font-semibold leading-[.95] tracking-[-0.05em] md:text-7xl">One premium knowledge ecosystem for IPN, IGC, IFR and ISR.</h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-700 dark:text-zinc-300">A production-ready PWA blueprint combining discovery, learning, publishing, membership, podcast RSS automation, secure admin CMS, SEO/AEO operations and cross-platform access in one unified Gate experience.</p>
+          <div className="mt-7 max-w-3xl rounded-[2rem] border border-black/10 bg-white/55 p-6 shadow-xl shadow-black/5 backdrop-blur dark:border-white/10 dark:bg-white/5">
+            <p className="font-serif text-2xl font-semibold leading-snug tracking-[-0.02em] text-zinc-950 dark:text-white">
+              Before the world fills your screen, fill your mind with something worth keeping.
+            </p>
+            <p className="mt-4 text-base leading-8 text-zinc-700 dark:text-zinc-300 md:text-lg">
+              Most of us reach for our phone before we have even finished waking up. The problem is not the screen. It is what we allow the screen to feed us. Gate is built for this new attention economy, where people increasingly discover, understand and remember ideas through visuals and audio rather than long articles and endless blogs. Founded by Zayd Haji, Gate brings IPN, International Public Network, IGC, Inspire Guide Connect, IFR, Integrity Finance Research, and ISR, Ideological Studies Research into one intelligent feed of infographics, podcasts, books and research. Instead of adding more noise to your day, Gate gives your attention somewhere meaningful to go. Open your phone, and discover something that informs you, challenges you, teaches you or stays with you.
+            </p>
+            <p className="mt-5 font-serif text-2xl font-semibold tracking-[-0.02em] text-[#9a6d35]">
+              Do not just scroll. Feed your mind.
+            </p>
+          </div>
           <div className="mt-8 flex flex-wrap gap-3">
             <button onClick={() => openAuth("sign-up")} className="rounded-full bg-zinc-950 px-6 py-4 text-sm font-bold text-white shadow-xl shadow-black/10 dark:bg-white dark:text-black">Become a Member</button>
             <a className="rounded-full border border-black/15 bg-white/60 px-6 py-4 text-sm font-bold dark:border-white/15 dark:bg-white/10" href="#gate-feed">Explore Gate Feed</a>
@@ -481,7 +508,7 @@ export default function Home() {
         <div className="rounded-[2.5rem] border border-black/10 bg-white/55 p-4 shadow-2xl shadow-black/10 backdrop-blur dark:border-white/10 dark:bg-white/5">
           <div className="grid gap-4 sm:grid-cols-2">
             {(Object.keys(platforms) as PlatformKey[]).map((id) => (
-              <button key={id} onClick={() => { setActive(id); setSelectedCategory("All"); }} className={`group min-h-56 rounded-[2rem] border p-5 text-left transition hover:-translate-y-1 ${active === id ? "border-black bg-white shadow-xl dark:border-white dark:bg-white/10" : "border-black/10 bg-white/45 dark:border-white/10 dark:bg-black/20"}`}>
+              <button key={id} onClick={() => { setActive(id); setSelectedCategory("All"); setSelectedTag("All"); }} className={`group min-h-56 rounded-[2rem] border p-5 text-left transition hover:-translate-y-1 ${active === id ? "border-black bg-white shadow-xl dark:border-white dark:bg-white/10" : "border-black/10 bg-white/45 dark:border-white/10 dark:bg-black/20"}`}>
                 <PlatformLogo id={id} />
                 <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-300">{platforms[id].name}</p>
                 <p className="mt-2 text-lg font-semibold">{platforms[id].promise}</p>
@@ -508,13 +535,13 @@ export default function Home() {
           <div className="mt-8 rounded-[2rem] border border-black/10 bg-white/60 p-5 dark:border-white/10 dark:bg-black/20">
             <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
               <div>
-                <h3 className="text-2xl font-semibold">Unified category and tag results</h3>
-                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">Example: select Books and the World tag to show all matching books across IPN, IGC, IFR and ISR below.</p>
+                <h3 className="text-2xl font-semibold">Gate hub category and tag results</h3>
+                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">Filters follow the selected hub, so categories, tags and results stay specific to the active Gate platform.</p>
               </div>
               <div className="rounded-full bg-zinc-950 px-4 py-2 text-sm font-bold text-white dark:bg-white dark:text-black">{filteredContent.length} results</div>
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
-              {["All", ...globalTags].map((tag) => <button onClick={() => setSelectedTag(tag)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${selectedTag === tag ? "border-[#9a6d35] bg-[#9a6d35] text-white" : "border-black/10 bg-white/70 dark:border-white/10 dark:bg-white/10"}`} key={tag}>#{tag}</button>)}
+              {["All", ...activeHubTags].map((tag) => <button onClick={() => setSelectedTag(tag)} className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${selectedTag === tag ? "border-[#9a6d35] bg-[#9a6d35] text-white" : "border-black/10 bg-white/70 dark:border-white/10 dark:bg-white/10"}`} key={tag}>#{tag}</button>)}
             </div>
             <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {filteredContent.map((item, index) => <article key={`${item.platform}-${item.title}`} className="rounded-[1.5rem] border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-black/30"><div className="flex items-start justify-between gap-3"><span className="rounded-full bg-zinc-950 px-3 py-1 text-xs font-bold text-white dark:bg-white dark:text-black">{String(index + 1).padStart(2, "0")} {item.type.slice(0, -1)}</span><span className="text-sm font-bold text-[#9a6d35]">{item.platform}</span></div><h4 className="mt-5 text-xl font-semibold">{item.title}</h4><p className="mt-2 text-sm text-zinc-500">{item.category}</p><p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{item.description}</p><div className="mt-4 flex flex-wrap gap-2">{item.tags.map((tag) => <button onClick={() => setSelectedTag(tag)} className="rounded-full bg-black/5 px-2 py-1 text-xs font-semibold dark:bg-white/10" key={tag}>#{tag}</button>)}</div></article>)}
@@ -589,7 +616,7 @@ export default function Home() {
       </section>
 
       <section id="search" className="mx-auto max-w-7xl px-4 py-14">
-        <SectionTitle eyebrow="Discovery" title="Global search, categories, tags, regions and topics" text="The search layer indexes platform, content type, title, descriptions, metadata, authors, categories, tags, regions and topics for instant cross-ecosystem retrieval." />
+        <SectionTitle eyebrow="Discovery" title="Global search, categories, tags, regions and topics" text="The search layer indexes platform-specific content type, title, descriptions, metadata, authors, categories, tags, regions and topics for instant ecosystem retrieval." />
         <div className="mt-8 rounded-[2rem] border border-black/10 bg-white/60 p-5 dark:border-white/10 dark:bg-white/5">
           <div className="flex items-center gap-3 rounded-full border border-black/10 bg-white px-5 py-4 dark:border-white/10 dark:bg-black/30"><Search /><span className="text-zinc-500">Search ethical finance podcasts, climate reports, Quranic studies, productivity books...</span></div>
           <div className="mt-5 flex flex-wrap gap-2">{["Platform", "Category", "Content Type", "Tags", "Region", "Topic", "Date", "Popularity"].map((f) => <span className="rounded-full bg-zinc-950 px-4 py-2 text-sm font-semibold text-white dark:bg-white dark:text-black" key={f}>{f}</span>)}</div>
