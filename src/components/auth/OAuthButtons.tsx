@@ -1,19 +1,50 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Loader2, AlertCircle } from "lucide-react";
 
 export function OAuthButtons() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [config, setConfig] = useState<{ google: boolean; apple: boolean } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/config")
+      .then((res) => res.json())
+      .then(setConfig)
+      .catch(() => {});
+  }, []);
 
   const handle = async (provider: "google" | "apple") => {
+    setError(null);
+    if (config && !config[provider]) {
+      setError(
+        `${provider === "google" ? "Google" : "Apple"} Sign-In is not configured in this environment. Please set ${
+          provider === "google"
+            ? "GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET"
+            : "APPLE_CLIENT_ID, APPLE_TEAM_ID, APPLE_KEY_ID, and APPLE_PRIVATE_KEY"
+        } in your .env file.`
+      );
+      return;
+    }
     setLoading(provider);
-    await signIn(provider, { callbackUrl: "/account" });
+    try {
+      await signIn(provider, { callbackUrl: "/account" });
+    } catch (err) {
+      setError("An error occurred during sign in. Please try again.");
+      setLoading(null);
+    }
   };
 
   return (
     <div className="grid gap-3">
+      {error && (
+        <div className="flex items-start gap-2.5 rounded-2xl bg-amber-500/10 p-4 text-xs font-semibold leading-relaxed text-amber-600 dark:bg-amber-500/5 dark:text-amber-500">
+          <AlertCircle className="mt-0.5 shrink-0" size={14} />
+          <span>{error}</span>
+        </div>
+      )}
       <button
         type="button"
         onClick={() => handle("google")}
