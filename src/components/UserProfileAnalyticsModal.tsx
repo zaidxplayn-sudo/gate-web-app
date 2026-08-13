@@ -31,13 +31,11 @@ export default function UserProfileAnalyticsModal({
   userEmail = "zayd@drzgate.com",
   userRole = "user",
   onClose,
-  onOpenAdminCms,
 }: {
   userName?: string;
   userEmail?: string;
   userRole?: "user" | "admin";
   onClose: () => void;
-  onOpenAdminCms?: () => void;
 }) {
   const [activeTab, setActiveTab] = useState<"profile" | "analytics" | "history" | "downloads" | "settings">("profile");
 
@@ -99,15 +97,8 @@ export default function UserProfileAnalyticsModal({
                 <User size={36} />
               )}
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{name}</h2>
-                {userRole === "admin" && (
-                  <span className="rounded-full bg-[#9a6d35] text-white px-2.5 py-0.5 text-[10px] font-extrabold uppercase">
-                    Admin
-                  </span>
-                )}
-              </div>
+<div>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{name}</h2>
               <p className="text-xs text-zinc-500 font-medium">{userEmail}</p>
               <div className="mt-1 flex items-center gap-2">
                 <span className="inline-block size-2 rounded-full bg-emerald-500" />
@@ -118,31 +109,20 @@ export default function UserProfileAnalyticsModal({
             </div>
           </div>
 
-          {userRole === "admin" && onOpenAdminCms && (
-            <button
-              onClick={() => {
-                onClose();
-                onOpenAdminCms();
-              }}
-              className="rounded-full bg-[#9a6d35] hover:bg-[#835b2a] text-white px-5 py-3 text-xs font-bold shadow-lg flex items-center gap-2 transition"
-            >
-              <ShieldCheck size={16} /> Open Admin CMS Console
-            </button>
-          )}
-        </div>
+          </div>
 
-        {/* Navigation Tabs */}
-        <div className="mt-6 flex flex-wrap gap-2 border-b border-black/10 dark:border-white/10 pb-4">
-          <button
-            onClick={() => setActiveTab("profile")}
-            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold transition ${
-              activeTab === "profile"
-                ? "bg-zinc-950 text-white dark:bg-white dark:text-black shadow-md"
-                : "bg-white/50 dark:bg-white/10 hover:bg-black/5"
-            }`}
-          >
-            <User size={16} /> Profile & Settings
-          </button>
+          {/* Navigation Tabs */}
+          <div className="mt-6 flex flex-wrap gap-2 border-b border-black/10 dark:border-white/10 pb-4">
+            <button
+              onClick={() => setActiveTab("profile")}
+              className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold transition ${
+                activeTab === "profile"
+                  ? "bg-zinc-950 text-white dark:bg-white dark:text-black shadow-md"
+                  : "bg-white/50 dark:bg-white/10 hover:bg-black/5"
+              }`}
+            >
+              <User size={16} /> Profile & Settings
+            </button>
 
           <button
             onClick={() => setActiveTab("analytics")}

@@ -45,6 +45,7 @@ import PodcastTranscriptModal, { TranscriptSegment } from "@/components/PodcastT
 import UserProfileAnalyticsModal from "@/components/UserProfileAnalyticsModal";
 import ServiceLandingModal from "@/components/ServiceLandingModal";
 import { hubs, hubByKey, gateSocials, zSocials } from "@/lib/gate-data";
+import { isAdmin } from "@/lib/admin-auth";
 import SocialLinks from "@/components/SocialLinks";
 
 type PlatformKey = "IPN" | "IGC" | "IFR" | "ISR";
@@ -462,19 +463,7 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <SocialLinks links={gateSocials} className="hidden lg:flex" />
             <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="rounded-full border border-black/10 bg-white/70 p-3 dark:border-white/10 dark:bg-white/10" aria-label="Toggle theme">{theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}</button>
-            {signedIn ? (
-              <div className="flex items-center gap-2">
-                {/* Admin CMS Button - STRICTLY ONLY VISIBLE TO ADMIN USER */}
-                {userRole === "admin" && (
-                  <button onClick={() => setAdminCmsOpen(true)} className="rounded-full bg-[#9a6d35] px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#835b2a] transition flex items-center gap-1.5">
-                    <ShieldCheck size={14} /> Admin CMS
-                  </button>
-                )}
-                <button onClick={() => { setSignedIn(false); setUserRole("user"); }} className="rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-black">Sign Out</button>
-              </div>
-            ) : (
-              <button onClick={() => openAuth("sign-in")} className="rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-black">Sign In</button>
-            )}
+<button onClick={() => openAuth("sign-in")} className="rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-black">Sign In</button>
             
             {/* Functional 3-Bar Menu Icon that opens Spotify-style User Profile & Growth Analytics */}
             <button
@@ -776,7 +765,7 @@ export default function Home() {
         </div>
         <div className="mt-8 grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
           <div className="rounded-[2rem] border border-black/10 bg-white/65 p-6 dark:border-white/10 dark:bg-white/5">
-            <div className="flex items-center gap-4"><div className="grid size-16 place-items-center rounded-full bg-zinc-950 text-white"><User /></div><div><h3 className="text-2xl font-semibold">Greetings, {signedIn ? userName : "Guest"}</h3><p className="text-sm text-zinc-500">{signedIn ? (userRole === "admin" ? "Gate System Administrator" : "Active Gate Member") : "Sign in to activate your dashboard"}</p></div></div>
+            <div className="flex items-center gap-4"><div className="grid size-16 place-items-center rounded-full bg-zinc-950 text-white"><User /></div><div><h3 className="text-2xl font-semibold">Greetings, {signedIn ? userName : "Guest"}</h3><p className="text-sm text-zinc-500">{signedIn ? "Active Gate Member" : "Sign in to activate your dashboard"}</p></div></div>
             <div className="mt-6 grid gap-3">
               <button onClick={() => setUserProfileModalOpen(true)} className="flex items-center justify-between rounded-2xl bg-black/5 hover:bg-black/10 p-3 font-semibold transition dark:bg-white/10 dark:hover:bg-white/20">
                 <span>View & Edit Full Profile</span> <ChevronRight size={18} />
@@ -901,7 +890,6 @@ export default function Home() {
           userEmail={`${userName.toLowerCase().replaceAll(" ", "")}@drzgate.com`}
           userRole={userRole}
           onClose={() => setUserProfileModalOpen(false)}
-          onOpenAdminCms={() => setAdminCmsOpen(true)}
         />
       )}
 
@@ -959,7 +947,7 @@ export default function Home() {
       )}
 
       <footer className="border-t border-black/10 px-4 py-10 dark:border-white/10"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 md:flex-row md:items-center"><div className="flex flex-col gap-3"><Logo compact /><p className="text-sm text-zinc-500">Gate. Learn. Discover. Grow.</p></div><SocialLinks links={gateSocials} /></div></footer>
-      {showWelcome && <div className="fixed right-4 top-24 z-[70] flex items-center gap-3 rounded-3xl border border-black/10 bg-white/95 p-4 shadow-2xl shadow-black/15 animate-in fade-in slide-in-from-top-3 dark:border-white/10 dark:bg-zinc-950/95"><Logo compact /><span className="font-semibold">Greetings, {userName} {userRole === "admin" ? "(Admin)" : ""}</span></div>}
+      {showWelcome && <div className="fixed right-4 top-24 z-[70] flex items-center gap-3 rounded-3xl border border-black/10 bg-white/95 p-4 shadow-2xl shadow-black/15 animate-in fade-in slide-in-from-top-3 dark:border-white/10 dark:bg-zinc-950/95"><Logo compact /><span className="font-semibold">Greetings, {userName}</span></div>}
       {authOpen && <AuthDialog mode={authMode} setMode={setAuthMode} onClose={() => setAuthOpen(false)} onSubmit={submitAuth} />}
     </main>
   );
@@ -993,14 +981,11 @@ function AuthDialog({ mode, setMode, onClose, onSubmit }: { mode: "sign-in" | "s
             <label className="flex-1 text-center py-2 text-xs font-bold rounded-xl cursor-pointer has-[:checked]:bg-zinc-950 has-[:checked]:text-white dark:has-[:checked]:bg-white dark:has-[:checked]:text-black transition">
               <input type="radio" name="role" value="user" defaultChecked className="sr-only" /> Member Login
             </label>
-            <label className="flex-1 text-center py-2 text-xs font-bold rounded-xl cursor-pointer has-[:checked]:bg-[#9a6d35] has-[:checked]:text-white transition">
-              <input type="radio" name="role" value="admin" className="sr-only" /> Admin Login
-            </label>
           </div>
         )}
 
         {mode === "sign-up" && <label className="mt-4 block text-sm font-semibold">Name<input name="name" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30 text-sm" placeholder="Zayd Haji" /></label>}
-        <label className="mt-4 block text-sm font-semibold">Email<input name="email" type="email" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30 text-sm" placeholder="admin@drzgate.com or member@example.com" /></label>
+        <label className="mt-4 block text-sm font-semibold">Email<input name="email" type="email" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30 text-sm" placeholder="member@example.com" /></label>
         {mode !== "forgot" && <label className="mt-4 block text-sm font-semibold">Password<input name="password" type="password" required className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none dark:border-white/10 dark:bg-black/30 text-sm" placeholder="Enter password" /></label>}
         <button className="mt-6 w-full rounded-full bg-zinc-950 px-5 py-4 font-bold text-white dark:bg-white dark:text-black text-sm">{button}</button>
         <div className="mt-5 flex flex-wrap justify-center gap-3 text-sm"><button type="button" onClick={() => setMode("sign-in")} className="font-semibold">Sign In</button><button type="button" onClick={() => setMode("sign-up")} className="font-semibold">Sign Up</button><button type="button" onClick={() => setMode("forgot")} className="font-semibold">Forgot Password</button></div>
