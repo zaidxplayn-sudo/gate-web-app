@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import Script from "next/script";
+import Providers from "@/components/Providers";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -33,13 +34,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${manrope.variable} ${cormorant.variable} antialiased`}
-      >
-        {children}
-        {/* WARNING FOR AGENT: DO NOT REMOVE THIS SCRIPT */}
-        <Script src="https://cdn.jsdelivr.net/gh/IdeavoAI/ideavo-scripts@latest/scripts/ideavo.min.js" />
-      </body>
+        <body
+          className={`${manrope.variable} ${cormorant.variable} antialiased`}
+        >
+          <Providers>{children}</Providers>
+          {/* WARNING FOR AGENT: DO NOT REMOVE THIS SCRIPT */}
+          <Script src="https://cdn.jsdelivr.net/gh/IdeavoAI/ideavo-scripts@latest/scripts/ideavo.min.js" />
+        </body>
     </html>
   );
 }
