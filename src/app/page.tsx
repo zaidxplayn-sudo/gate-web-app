@@ -785,7 +785,14 @@ export default function Home() {
       <section id="z-web-app" className="mx-auto max-w-7xl px-4 py-14">
         <div className="rounded-[2.5rem] border border-black/10 bg-white/65 p-8 dark:border-white/10 dark:bg-white/5 md:p-12">
           <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-center">
-            <div><PlatformLogo id="Z" /><h2 className="mt-5 text-4xl font-semibold tracking-tight">Z | ZAYDH Productivity & Automation Web App</h2><p className="mt-4 max-w-2xl text-zinc-600 dark:text-zinc-300">Work is becoming increasingly digital, but digital does not always mean productive. Z | ZAYDH Productivity &amp; Automation is built to help people simplify repetitive work, organise their workflow and spend less time managing tasks that technology can handle better. While Gate is your destination for knowledge, Z is the practical layer for turning that knowledge into a more organised, efficient digital workday. Explore the Z Web App, discover its productivity and automation capabilities, and listen to the Z podcast for ideas on working smarter, building better systems and navigating the changing world of technology. Learn what matters with Gate. Build a better workflow with Z. Z remains completely independent from Gate's membership, navigation and content ecosystem.</p></div>
+            <div className="max-w-2xl">
+              <PlatformLogo id="Z" />
+              <h2 className="mt-5 text-4xl font-semibold tracking-tight">Z | ZAYDH Productivity &amp; Automation Web App</h2>
+              <p className="mt-4 text-base leading-8 text-zinc-600 dark:text-zinc-300 md:text-lg">Work is becoming increasingly digital, but digital does not always mean productive. Z is built to help people simplify repetitive work, organise their workflow and spend less time managing tasks that technology can handle better.</p>
+              <p className="mt-4 text-base leading-8 text-zinc-600 dark:text-zinc-300 md:text-lg">While Gate is your destination for knowledge, Z is the practical layer for turning that knowledge into a more organised, efficient digital workday. Explore the Z Web App, discover its productivity and automation capabilities, and listen to the Z podcast for ideas on working smarter, building better systems and navigating the changing world of technology.</p>
+              <p className="mt-6 font-serif text-2xl font-semibold tracking-[-0.02em] text-[#9a6d35]">Learn what matters with Gate. Build a better workflow with Z.</p>
+              <p className="mt-4 text-sm font-medium text-zinc-500 dark:text-zinc-400">Z remains completely independent from Gate's membership, navigation and content ecosystem.</p>
+            </div>
             <a href="https://www.zaydh.com" target="_blank" rel="noopener noreferrer" className="rounded-full bg-zinc-950 px-7 py-4 text-center font-bold text-white dark:bg-white dark:text-black">Open Z Web App</a>
           </div>
         </div>
