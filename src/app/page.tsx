@@ -15,7 +15,6 @@ import {
   HeartPulse,
   Image as ImageIcon,
   LayoutDashboard,
-  Lock,
   Menu,
   Moon,
   Pause,
@@ -761,15 +760,6 @@ export default function Home() {
             <Metric title="Completion Rate" value="76%" icon={<Activity />} />
             <Metric title="Learning Streak" value="21 days" icon={<HeartPulse />} />
           </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-14">
-        <SectionTitle eyebrow="Premium Lock UX" title="Smooth member conversion without interruptions" text="Locked premium content uses a bottom-to-top gradient overlay with blur, visible content preview, login and membership actions." />
-        <div className="relative mt-8 overflow-hidden rounded-[2rem] border border-black/10 bg-white/65 p-6 dark:border-white/10 dark:bg-white/5">
-          <h3 className="max-w-2xl text-3xl font-semibold">Research Report: Global ethical finance outlook and policy pathways</h3>
-          <p className="mt-4 max-w-3xl text-zinc-600 dark:text-zinc-300">This premium report preview remains readable enough to understand value while the protected section is secured behind membership access...</p>
-          {!signedIn && <div className="absolute inset-x-0 bottom-0 rounded-t-[2rem] bg-gradient-to-t from-zinc-950 via-zinc-950/90 to-transparent p-8 pt-28 text-white backdrop-blur-sm"><Lock /><h4 className="mt-3 text-2xl font-semibold">Unlock with Gate Membership</h4><p className="mt-2 text-white/75">Premium books, podcasts, reports, downloads, certificates, workshops and communities.</p><div className="mt-5 flex gap-3"><button onClick={() => openAuth("sign-in")} className="rounded-full bg-white px-5 py-3 font-bold text-black">Log In</button><button onClick={() => openAuth("sign-up")} className="rounded-full border border-white/30 px-5 py-3 font-bold">Become a Member</button></div></div>}
         </div>
       </section>
 
