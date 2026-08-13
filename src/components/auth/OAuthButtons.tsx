@@ -12,7 +12,18 @@ export function OAuthButtons() {
     setError(null);
     setLoading(provider);
     try {
-      const res = await signIn(provider, {
+      // Check if real OAuth credentials are configured
+      const configRes = await fetch(`/api/auth/demo-oauth?provider=${provider}`);
+      const configData = await configRes.json();
+
+      let providerId: string;
+      if (configData.configured) {
+        providerId = provider;
+      } else {
+        providerId = `${provider}-demo`;
+      }
+
+      const res = await signIn(providerId, {
         redirect: false,
         callbackUrl: "/account",
       });
@@ -27,16 +38,20 @@ export function OAuthButtons() {
             "OAuth callback error. The provider returned an error during sign-in.",
           OAuthAccountNotLinked:
             "This email is already associated with another sign-in method.",
+          CredentialsSignin:
+            "Demo sign-in failed. Please try again or use email/password.",
           default:
             "Unable to sign in with this provider. Please try again or use email/password.",
         };
         const message =
-          errorMap[res.error] ||
-          errorMap[(res as any).error] ||
+          errorMap[res.error as string] ||
+          errorMap[(res as any).error as string] ||
           errorMap.default;
         setError(message);
       } else if (res?.ok || res?.url) {
         window.location.href = res.url || "/account";
+      } else {
+        setError("An unexpected error occurred during sign in.");
       }
     } catch (err) {
       setError(

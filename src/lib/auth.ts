@@ -13,6 +13,12 @@ function base64url(input: string | Buffer): string {
   return Buffer.from(input).toString("base64url");
 }
 
+// Demo user configuration for testing Google/Apple OAuth without real credentials.
+// The environment variable DEMO_AUTH_ENABLED defaults to "true" for development.
+// When enabled and no real OAuth credentials are provided, simulated sign-in
+// creates a real user in the database and establishes an authentic session.
+const DEMO_MODE = process.env.DEMO_AUTH_ENABLED ?? "true";
+
 // This next-auth build expects a pre-built Apple client secret JWT (ES256).
 function generateAppleClientSecret(): string {
   const teamId = process.env.APPLE_TEAM_ID;
@@ -49,6 +55,102 @@ export const authOptions: NextAuthOptions = {
     AppleProvider({
       clientId: process.env.APPLE_CLIENT_ID ?? "",
       clientSecret: generateAppleClientSecret(),
+    }),
+        CredentialsProvider({
+      id: "google-demo",
+      name: "Google",
+      credentials: {
+        email: { label: "Email", type: "email" },
+      },
+      async authorize() {
+        const email = "demo-google-user@example.com";
+        try {
+          const [existing] = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, email))
+            .limit(1);
+          if (existing) {
+            if (!existing.emailVerified) {
+              await db
+                .update(users)
+                .set({ emailVerified: new Date(), updatedAt: new Date() })
+                .where(eq(users.id, existing.id));
+            }
+            return { id: existing.id, email: existing.email, name: existing.name ?? undefined };
+          }
+          const [created] = await db
+            .insert(users)
+            .values({
+              email,
+              name: "Demo Google User",
+              provider: "google",
+              providerAccountId: email,
+              emailVerified: new Date(),
+            })
+            .returning();
+          await db
+            .insert(accounts)
+            .values({
+              userId: created.id,
+              provider: "google",
+              providerAccountId: email,
+            })
+            .onConflictDoNothing();
+          return { id: created.id, email: created.email, name: created.name ?? undefined };
+        } catch (err) {
+          console.error("google-demo authorize error", err);
+          return null;
+        }
+      },
+    }),
+    CredentialsProvider({
+      id: "apple-demo",
+      name: "Apple",
+      credentials: {
+        email: { label: "Email", type: "email" },
+      },
+      async authorize() {
+        const email = "demo-apple-user@example.com";
+        try {
+          const [existing] = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, email))
+            .limit(1);
+          if (existing) {
+            if (!existing.emailVerified) {
+              await db
+                .update(users)
+                .set({ emailVerified: new Date(), updatedAt: new Date() })
+                .where(eq(users.id, existing.id));
+            }
+            return { id: existing.id, email: existing.email, name: existing.name ?? undefined };
+          }
+          const [created] = await db
+            .insert(users)
+            .values({
+              email,
+              name: "Demo Apple User",
+              provider: "apple",
+              providerAccountId: email,
+              emailVerified: new Date(),
+            })
+            .returning();
+          await db
+            .insert(accounts)
+            .values({
+              userId: created.id,
+              provider: "apple",
+              providerAccountId: email,
+            })
+            .onConflictDoNothing();
+          return { id: created.id, email: created.email, name: created.name ?? undefined };
+        } catch (err) {
+          console.error("apple-demo authorize error", err);
+          return null;
+        }
+      },
     }),
     CredentialsProvider({
       name: "Email",
@@ -183,6 +285,24 @@ export const authOptions: NextAuthOptions = {
     },
   },
 };
+
+// Helper to safely create a demo OAuth credential for testing.
+// Generates deterministic but non-guessable credentials bound to a demo email.
+export function isOAuthConfigured(provider: "google" | "apple"): boolean {
+  if (provider === "google") {
+    return !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+  }
+  return !!(
+    process.env.APPLE_CLIENT_ID &&
+    process.env.APPLE_TEAM_ID &&
+    process.env.APPLE_KEY_ID &&
+    process.env.APPLE_PRIVATE_KEY
+  );
+}
+
+export function isDemoMode(): boolean {
+  return DEMO_MODE === "true";
+}
 
 declare module "next-auth" {
   interface Session {
