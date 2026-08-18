@@ -2,50 +2,48 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 import AuthScreen from "@/components/auth/AuthScreen";
 import { OAuthButtons } from "@/components/auth/OAuthButtons";
 import { Loader2 } from "lucide-react";
+import { api } from "@/lib/axios";
+import { API } from "@/lib/constants";
+import { getPasswordStrength } from "@/lib/password-strength";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const strength = getPasswordStrength(password);
+
+  const strengthColor = ["", "bg-red-500", "bg-amber-400", "bg-yellow-400", "bg-emerald-500"][
+    strength.score
+  ];
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (strength.score < 2) {
+      setError("Please choose a stronger password.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Could not create account.");
-        setLoading(false);
-        return;
-      }
-      const signInRes = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-      if (signInRes?.error) {
-        setError("Account created, but sign in failed. Please sign in manually.");
-        setLoading(false);
-        return;
-      }
+      await api.post(API.AUTH.REGISTER, { firstName, lastName, email, password });
+      // Auto sign-in after registration
+      await api.post(API.AUTH.LOGIN, { email, password });
       router.push("/account");
       router.refresh();
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err: any) {
+      setError(err?.message ?? "Could not create account. Please try again.");
+    } finally {
       setLoading(false);
     }
   };
@@ -70,29 +68,64 @@ export default function SignUpPage() {
         <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
       </div>
       <form onSubmit={submit} className="grid gap-3">
-        <input
-          type="text"
-          placeholder="Name (optional)"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-sm outline-none focus:border-[#9a6d35] dark:border-white/10 dark:bg-black/30"
-        />
+        <div className="grid grid-cols-2 gap-3">
+          <input
+            type="text"
+            required
+            placeholder="First name"
+            value={firstName}
+            autoComplete="given-name"
+            onChange={(e) => setFirstName(e.target.value)}
+            className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-sm outline-none focus:border-[#9a6d35] dark:border-white/10 dark:bg-black/30"
+          />
+          <input
+            type="text"
+            required
+            placeholder="Last name"
+            value={lastName}
+            autoComplete="family-name"
+            onChange={(e) => setLastName(e.target.value)}
+            className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-sm outline-none focus:border-[#9a6d35] dark:border-white/10 dark:bg-black/30"
+          />
+        </div>
         <input
           type="email"
           required
+          autoComplete="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-sm outline-none focus:border-[#9a6d35] dark:border-white/10 dark:bg-black/30"
         />
-        <input
-          type="password"
-          required
-          placeholder="Password (min 8 chars, letters + numbers)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-sm outline-none focus:border-[#9a6d35] dark:border-white/10 dark:bg-black/30"
-        />
+        <div>
+          <input
+            type="password"
+            required
+            autoComplete="new-password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-sm outline-none focus:border-[#9a6d35] dark:border-white/10 dark:bg-black/30"
+          />
+          {password && (
+            <div className="mt-2 space-y-1">
+              <div className="flex gap-1">
+                {[1, 2, 3, 4].map((level) => (
+                  <div
+                    key={level}
+                    className={`h-1 flex-1 rounded-full transition-colors ${
+                      strength.score >= level ? strengthColor : "bg-black/10 dark:bg-white/10"
+                    }`}
+                  />
+                ))}
+              </div>
+              <p className="text-xs text-zinc-500">
+                <span className="font-semibold">{strength.label}</span>
+                {strength.hint ? ` — ${strength.hint}` : ""}
+              </p>
+            </div>
+          )}
+        </div>
         {error && <p className="text-sm font-medium text-red-600">{error}</p>}
         <button
           type="submit"
@@ -100,7 +133,7 @@ export default function SignUpPage() {
           className="mt-1 flex items-center justify-center gap-2 rounded-full bg-zinc-950 px-5 py-3.5 text-sm font-bold text-white transition hover:opacity-90 disabled:opacity-60 dark:bg-white dark:text-black"
         >
           {loading && <Loader2 className="animate-spin" size={16} />}
-          Create Account with Email
+          Create Account
         </button>
       </form>
       <p className="mt-6 text-center text-xs text-zinc-400">

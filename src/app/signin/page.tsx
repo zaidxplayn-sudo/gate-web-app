@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 import AuthScreen from "@/components/auth/AuthScreen";
 import { OAuthButtons } from "@/components/auth/OAuthButtons";
 import { Loader2 } from "lucide-react";
+import { api } from "@/lib/axios";
+import { API } from "@/lib/constants";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -16,24 +17,16 @@ export default function SignInPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Handle error param from OAuth callback redirect
   useEffect(() => {
     const errorParam = searchParams.get("error");
     if (errorParam) {
       const errorMap: Record<string, string> = {
-        Configuration:
-          "OAuth configuration error. Please ensure provider credentials are correctly set in your .env file.",
-        OAuthSignin:
-          "OAuth sign-in failed. Please check your provider credentials.",
-        OAuthCallback:
-          "OAuth callback error. The provider returned an error.",
-        OAuthAccountNotLinked:
-          "This email is already associated with another sign-in method.",
-        default:
-          "Authentication error. Please try again.",
+        oauth_failed: "Google sign-in failed. Please try again.",
+        account_not_found: "No account found for this Google profile.",
+        default: "Authentication error. Please try again.",
       };
-      setError(
-        errorMap[errorParam] || errorParam
-      );
+      setError(errorMap[errorParam] ?? errorParam);
     }
   }, [searchParams]);
 
@@ -41,17 +34,14 @@ export default function SignInPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-    setLoading(false);
-    if (res?.error) {
-      setError("Invalid email or password. Please try again.");
-    } else {
+    try {
+      await api.post(API.AUTH.LOGIN, { email, password });
       router.push("/account");
       router.refresh();
+    } catch (err: any) {
+      setError(err?.message ?? "Invalid email or password. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,6 +73,7 @@ export default function SignInPage() {
         <input
           type="email"
           required
+          autoComplete="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -91,6 +82,7 @@ export default function SignInPage() {
         <input
           type="password"
           required
+          autoComplete="current-password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}

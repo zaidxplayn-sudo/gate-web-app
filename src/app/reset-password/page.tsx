@@ -5,7 +5,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import AuthScreen from "@/components/auth/AuthScreen";
 import { Loader2, CheckCircle2, Eye, EyeOff } from "lucide-react";
-import { validatePassword } from "@/lib/validation";
+import { api } from "@/lib/axios";
+import { API } from "@/lib/constants";
+import { getPasswordStrength } from "@/lib/password-strength";
 
 export default function ResetPasswordPage() {
   return (
@@ -27,39 +29,35 @@ function ResetPasswordInner() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const strength = getPasswordStrength(password);
+  const strengthColor = ["", "bg-red-500", "bg-amber-400", "bg-yellow-400", "bg-emerald-500"][
+    strength.score
+  ];
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
     if (!token) {
       setError("Missing reset token. Please request a new link.");
       return;
     }
-    const pwError = validatePassword(password);
-    if (pwError) {
-      setError(pwError);
+    if (strength.score < 2) {
+      setError("Please choose a stronger password.");
       return;
     }
     if (password !== confirm) {
       setError("Passwords do not match.");
       return;
     }
+
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Reset failed. Please try again.");
-        setLoading(false);
-        return;
-      }
+      await api.post(API.AUTH.RESET_PASS, { token, password });
       setDone(true);
       setTimeout(() => router.push("/signin"), 2500);
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err: any) {
+      setError(err?.message ?? "Reset failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -88,6 +86,7 @@ function ResetPasswordInner() {
             <input
               type={show ? "text" : "password"}
               required
+              autoComplete="new-password"
               placeholder="New password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -102,9 +101,28 @@ function ResetPasswordInner() {
               {show ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
+          {password && (
+            <div className="space-y-1">
+              <div className="flex gap-1">
+                {[1, 2, 3, 4].map((level) => (
+                  <div
+                    key={level}
+                    className={`h-1 flex-1 rounded-full transition-colors ${
+                      strength.score >= level ? strengthColor : "bg-black/10 dark:bg-white/10"
+                    }`}
+                  />
+                ))}
+              </div>
+              <p className="text-xs text-zinc-500">
+                <span className="font-semibold">{strength.label}</span>
+                {strength.hint ? ` — ${strength.hint}` : ""}
+              </p>
+            </div>
+          )}
           <input
             type={show ? "text" : "password"}
             required
+            autoComplete="new-password"
             placeholder="Confirm new password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
