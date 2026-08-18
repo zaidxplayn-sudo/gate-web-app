@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import AuthScreen from "@/components/auth/AuthScreen";
 import { Loader2, CheckCircle2 } from "lucide-react";
+import { api } from "@/lib/axios";
+import { API } from "@/lib/constants";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -16,20 +18,10 @@ export default function ForgotPasswordPage() {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Request failed.");
-        setLoading(false);
-        return;
-      }
+      await api.post(API.AUTH.FORGOT_PASS, { email });
       setDone(true);
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err: any) {
+      setError(err?.message ?? "Request failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -49,8 +41,8 @@ export default function ForgotPasswordPage() {
         <div className="flex flex-col items-center gap-3 py-4 text-center">
           <CheckCircle2 className="text-emerald-500" size={40} />
           <p className="text-sm text-zinc-600 dark:text-zinc-300">
-            If an account exists for that email, a reset link has been sent. The link
-            expires in 30 minutes.
+            If an account exists for that email, a reset link has been sent. Check
+            your inbox — the link expires in 30 minutes.
           </p>
         </div>
       ) : (
@@ -58,6 +50,7 @@ export default function ForgotPasswordPage() {
           <input
             type="email"
             required
+            autoComplete="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
